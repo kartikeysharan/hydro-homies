@@ -1,66 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hydro Homies</title>
-  <style>
-    body {
-      font-family: Arial;
-      padding: 30px;
-    }
-    .person {
-      margin-bottom: 30px;
-    }
-    input {
-      width: 80px;
-    }
-  </style>
+    <title>Hydro Homies Tracker</title>
+    <style>
+        /* Make the body full screen and center content */
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #e0f7fa; /* light water-blue background */
+        }
+
+        /* Container for all content */
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 40px 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #00796b;
+        }
+
+        input {
+            width: 80%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1.2rem;
+            border: 2px solid #00796b;
+            border-radius: 10px;
+        }
+
+        button {
+            width: 85%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 12px;
+            background-color: #00796b;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 20px 0 10px;
+            color: #004d40;
+        }
+
+        p {
+            font-size: 1.4rem;
+            margin: 8px 0;
+        }
+
+        #log-water {
+            background-color: #26a69a;
+        }
+
+        #log-water:hover {
+            background-color: #00796b;
+        }
+
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Hydro Homies</h1>
+        
+        <div>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="password" placeholder="Password">
+            <button id="signup">Sign Up</button>
+            <button id="login">Login</button>
+        </div>
+        
+        <h2>Welcome, <span id="user-name">Guest</span></h2>
+        
+        <button id="log-water">Drink 1L</button>
+        <p>Today you drank: <span id="total">0</span> L</p>
+        <p>Your friend drank: <span id="friend-total">0</span> L</p>
+    </div>
 
-  <h1>Hydro Homies 💧</h1>
-
-  <div class="person">
-    <h2>Kartikey</h2>
-    <input type="number" id="kartikeyInput" placeholder="oz">
-    <button onclick="addWater('kartikey')">Add</button>
-    <p>Total: <span id="kartikeyTotal">0</span> oz</p>
-  </div>
-
-  <div class="person">
-    <h2>Marcee</h2>
-    <input type="number" id="marceeInput" placeholder="oz">
-    <button onclick="addWater('marcee')">Add</button>
-    <p>Total: <span id="marceeTotal">0</span> oz</p>
-  </div>
-
-<script>
-  function getTotal(name) {
-    return Number(localStorage.getItem(name)) || 0;
-  }
-
-  function setTotal(name, value) {
-    localStorage.setItem(name, value);
-  }
-
-  function updateUI() {
-    document.getElementById("kartikeyTotal").innerText = getTotal("kartikey");
-    document.getElementById("marceeTotal").innerText = getTotal("marcee");
-  }
-
-  function addWater(name) {
-    const input = document.getElementById(name + "Input");
-    const amount = Number(input.value);
-
-    if (amount > 0) {
-      const newTotal = getTotal(name) + amount;
-      setTotal(name, newTotal);
-      updateUI();
-      input.value = "";
-    }
-  }
-
-  updateUI();
-</script>
-
+    <!-- Your existing Firebase script here -->
 </body>
 </html>
