@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hydro Homies 🌊</title>
+    <title>Hydro Homies Tracker</title>
     <style>
         body {
             margin: 0;
@@ -15,7 +15,7 @@
 
         .container {
             text-align: center;
-            background: white;
+            background: #ffffff;
             padding: 30px 20px;
             border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
@@ -23,8 +23,14 @@
             max-width: 500px;
         }
 
-        h1 { color: #00796b; }
-        h2 { margin-top: 25px; color: #004d40; }
+        h1 {
+            color: #00796b;
+        }
+
+        h2 {
+            margin-top: 25px;
+            color: #004d40;
+        }
 
         button {
             padding: 8px 14px;
@@ -36,7 +42,9 @@
             color: white;
         }
 
-        button:hover { background: #00796b; }
+        button:hover {
+            background: #00796b;
+        }
 
         input {
             width: 60%;
@@ -46,59 +54,53 @@
             border-radius: 8px;
         }
 
-        /* WAVE CONTAINER */
-        .wave-container {
-            position: relative;
-            height: 120px;
-            width: 100%;
-            background: #e0f7fa;
+        .progress-container {
+            background: #ddd;
             border-radius: 20px;
-            overflow: hidden;
+            height: 25px;
+            width: 100%;
             margin: 10px 0;
-            border: 2px solid #00796b;
+            overflow: hidden;
+            position: relative;
         }
 
-        .wave {
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            top: 100%;
-            left: -50%;
-            background: rgba(0,121,107,0.6);
-            border-radius: 40%;
-            animation: waveMove 6s linear infinite;
-            transition: top 0.8s ease;
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(45deg, #4dd0e1, #00796b);
+            transition: width 0.6s ease;
+            position: relative;
         }
 
-        .wave::before {
-            content: "";
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            top: -10%;
-            left: -50%;
-            background: rgba(77,208,225,0.6);
-            border-radius: 45%;
-            animation: waveMove 8s linear infinite reverse;
+        /* Splash animation */
+        .splash {
+            animation: splashAnim 0.6s ease;
         }
 
-        @keyframes waveMove {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        @keyframes splashAnim {
+            0% { transform: scaleY(1); }
+            50% { transform: scaleY(1.3); }
+            100% { transform: scaleY(1); }
         }
 
         .percentage {
             font-size: 0.9rem;
-        }
-
-        .celebrate {
-            box-shadow: 0 0 25px #00e5ff;
+            margin-top: -5px;
         }
 
         #winner {
             font-weight: bold;
             margin-top: 15px;
             color: #004d40;
+        }
+
+        .celebrate {
+            animation: glow 1s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 10px #4dd0e1; }
+            to { box-shadow: 0 0 25px #00796b; }
         }
 
         .reset-btn {
@@ -113,11 +115,12 @@
 </head>
 <body>
 <div class="container">
-    <h1>Hydro Homies 🌊💧</h1>
+    <h1>Hydro Homies 💧</h1>
     <p><strong>Daily Goal: 120 oz</strong></p>
 
     <!-- YOU -->
     <h2>You</h2>
+
     <button onclick="addWater('you', 16)">+16 oz</button>
     <button onclick="addWater('you', 26)">+26 oz</button>
     <button onclick="addWater('you', 32)">+32 oz</button>
@@ -126,14 +129,14 @@
     <button onclick="addCustom('you')">Add</button>
 
     <p>Total: <span id="your-total">0</span> oz</p>
-
-    <div class="wave-container" id="your-container">
-        <div id="your-wave" class="wave"></div>
+    <div class="progress-container">
+        <div id="your-progress" class="progress-bar"></div>
     </div>
     <div class="percentage">Progress: <span id="your-percent">0</span>%</div>
 
     <!-- FRIEND -->
     <h2>Your Friend</h2>
+
     <button onclick="addWater('friend', 16.9)">+16.9 oz</button>
     <button onclick="addWater('friend', 32)">+32 oz</button>
     <br>
@@ -141,13 +144,13 @@
     <button onclick="addCustom('friend')">Add</button>
 
     <p>Total: <span id="friend-total">0</span> oz</p>
-
-    <div class="wave-container" id="friend-container">
-        <div id="friend-wave" class="wave"></div>
+    <div class="progress-container">
+        <div id="friend-progress" class="progress-bar"></div>
     </div>
     <div class="percentage">Progress: <span id="friend-percent">0</span>%</div>
 
     <div id="winner">Hydration battle begins 😤💧</div>
+
     <button class="reset-btn" onclick="resetDay()">Reset Day</button>
 </div>
 
@@ -162,6 +165,12 @@
         localStorage.setItem("friendTotal", friendTotal);
     }
 
+    function splashEffect(element) {
+        element.classList.remove("splash");
+        void element.offsetWidth;
+        element.classList.add("splash");
+    }
+
     function updateUI() {
         document.getElementById("your-total").innerText = yourTotal.toFixed(1);
         document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
@@ -169,25 +178,26 @@
         let yourPercent = Math.min((yourTotal / goal) * 100, 100);
         let friendPercent = Math.min((friendTotal / goal) * 100, 100);
 
+        let yourBar = document.getElementById("your-progress");
+        let friendBar = document.getElementById("friend-progress");
+
+        yourBar.style.width = yourPercent + "%";
+        friendBar.style.width = friendPercent + "%";
+
         document.getElementById("your-percent").innerText = yourPercent.toFixed(0);
         document.getElementById("friend-percent").innerText = friendPercent.toFixed(0);
 
-        // Wave rises (100% = top, 0% = bottom)
-        document.getElementById("your-wave").style.top = (100 - yourPercent) + "%";
-        document.getElementById("friend-wave").style.top = (100 - friendPercent) + "%";
+        splashEffect(yourBar);
+        splashEffect(friendBar);
 
-        // Glow if complete
-        toggleCelebrate("your-container", yourPercent);
-        toggleCelebrate("friend-container", friendPercent);
+        if (yourPercent >= 100) yourBar.classList.add("celebrate");
+        else yourBar.classList.remove("celebrate");
+
+        if (friendPercent >= 100) friendBar.classList.add("celebrate");
+        else friendBar.classList.remove("celebrate");
 
         updateWinner();
         saveData();
-    }
-
-    function toggleCelebrate(id, percent) {
-        const container = document.getElementById(id);
-        if (percent >= 100) container.classList.add("celebrate");
-        else container.classList.remove("celebrate");
     }
 
     function addWater(person, amount) {
