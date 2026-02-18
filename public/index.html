@@ -154,59 +154,71 @@
     <button class="reset-btn" onclick="resetDay()">Reset Day</button>
 </div>
 
-<script>
+<script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+    
+    const firebaseConfig = {
+      apiKey: "PASTE_HERE",
+      authDomain: "PASTE_HERE",
+      databaseURL: "PASTE_HERE",
+      projectId: "PASTE_HERE",
+      storageBucket: "PASTE_HERE",
+      messagingSenderId: "PASTE_HERE",
+      appId: "PASTE_HERE"
+    };
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    
     const goal = 120;
-
-    let yourTotal = parseFloat(localStorage.getItem("yourTotal")) || 0;
-    let friendTotal = parseFloat(localStorage.getItem("friendTotal")) || 0;
-
+    
+    let yourTotal = 0;
+    let friendTotal = 0;
+    
+    onValue(ref(db, "hydration"), (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            yourTotal = data.yourTotal || 0;
+            friendTotal = data.friendTotal || 0;
+            updateUI(false);
+        }
+    });
+    
     function saveData() {
-        localStorage.setItem("yourTotal", yourTotal);
-        localStorage.setItem("friendTotal", friendTotal);
+        set(ref(db, "hydration"), {
+            yourTotal: yourTotal,
+            friendTotal: friendTotal
+        });
     }
-
-    function splashEffect(element) {
-        element.classList.remove("splash");
-        void element.offsetWidth;
-        element.classList.add("splash");
-    }
-
-    function updateUI() {
+    
+    function updateUI(shouldSave = true) {
+    
         document.getElementById("your-total").innerText = yourTotal.toFixed(1);
         document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
-
+    
         let yourPercent = Math.min((yourTotal / goal) * 100, 100);
         let friendPercent = Math.min((friendTotal / goal) * 100, 100);
-
-        let yourBar = document.getElementById("your-progress");
-        let friendBar = document.getElementById("friend-progress");
-
-        yourBar.style.width = yourPercent + "%";
-        friendBar.style.width = friendPercent + "%";
-
+    
+        document.getElementById("your-progress").style.width = yourPercent + "%";
+        document.getElementById("friend-progress").style.width = friendPercent + "%";
+    
         document.getElementById("your-percent").innerText = yourPercent.toFixed(0);
         document.getElementById("friend-percent").innerText = friendPercent.toFixed(0);
-
-        splashEffect(yourBar);
-        splashEffect(friendBar);
-
-        if (yourPercent >= 100) yourBar.classList.add("celebrate");
-        else yourBar.classList.remove("celebrate");
-
-        if (friendPercent >= 100) friendBar.classList.add("celebrate");
-        else friendBar.classList.remove("celebrate");
-
+    
         updateWinner();
-        saveData();
+    
+        if (shouldSave) saveData();
     }
-
-    function addWater(person, amount) {
+    
+    window.addWater = function(person, amount) {
         if (person === "you") yourTotal += amount;
         else friendTotal += amount;
-        updateUI();
-    }
-
-    function addCustom(person) {
+        updateUI(true);
+    };
+    
+    window.addCustom = function(person) {
         if (person === "you") {
             let val = parseFloat(document.getElementById("your-input").value);
             if (!isNaN(val) && val > 0) {
@@ -220,9 +232,9 @@
                 document.getElementById("friend-input").value = "";
             }
         }
-        updateUI();
-    }
-
+        updateUI(true);
+    };
+    
     function updateWinner() {
         let text = "";
         if (yourTotal > friendTotal) text = "🏆 You're winning!";
@@ -230,14 +242,13 @@
         else text = "It's tied! Stay hydrated 😤💧";
         document.getElementById("winner").innerText = text;
     }
-
-    function resetDay() {
+    
+    window.resetDay = function() {
         yourTotal = 0;
         friendTotal = 0;
-        updateUI();
-    }
+        updateUI(true);
+    };
 
-    updateUI();
 </script>
 </body>
 </html>
