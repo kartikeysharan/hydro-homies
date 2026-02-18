@@ -3,7 +3,6 @@
 <head>
     <title>Hydro Homies Tracker</title>
     <style>
-        /* Make the body full screen and center content */
         body {
             margin: 0;
             height: 100vh;
@@ -11,10 +10,9 @@
             justify-content: center;
             align-items: center;
             font-family: Arial, sans-serif;
-            background: #e0f7fa; /* light water-blue background */
+            background: #e0f7fa;
         }
 
-        /* Container for all content */
         .container {
             text-align: center;
             background: #ffffff;
@@ -22,7 +20,7 @@
             border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             width: 90%;
-            max-width: 400px;
+            max-width: 450px;
         }
 
         h1 {
@@ -31,71 +29,79 @@
             color: #00796b;
         }
 
+        h2 {
+            margin-top: 25px;
+            color: #004d40;
+        }
+
         input {
-            width: 80%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 1.2rem;
+            width: 70%;
+            padding: 12px;
+            margin: 8px 0;
+            font-size: 1rem;
             border: 2px solid #00796b;
             border-radius: 10px;
         }
 
         button {
-            width: 85%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 1.3rem;
+            padding: 12px 18px;
+            font-size: 1rem;
             border: none;
-            border-radius: 12px;
-            background-color: #00796b;
+            border-radius: 10px;
+            background-color: #26a69a;
             color: white;
             cursor: pointer;
-            transition: background 0.3s;
+            margin-left: 5px;
         }
 
         button:hover {
-            background-color: #004d40;
-        }
-
-        h2 {
-            font-size: 1.8rem;
-            margin: 20px 0 10px;
-            color: #004d40;
-        }
-
-        p {
-            font-size: 1.4rem;
-            margin: 8px 0;
-        }
-
-        #log-water {
-            background-color: #26a69a;
-        }
-
-        #log-water:hover {
             background-color: #00796b;
         }
 
+        p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Hydro Homies</h1>
-        
-        <div>
-            <input type="email" id="email" placeholder="Email">
-            <input type="password" id="password" placeholder="Password">
-            <button id="signup">Sign Up</button>
-            <button id="login">Login</button>
-        </div>
-        
-        <h2>Welcome, <span id="user-name">Guest</span></h2>
-        
-        <button id="log-water">Drink 1L</button>
-        <p>Today you drank: <span id="total">0</span> L</p>
-        <p>Your friend drank: <span id="friend-total">0</span> L</p>
+        <h1>Hydro Homies 💧</h1>
+
+        <!-- Your Section -->
+        <h2>You</h2>
+        <input type="number" id="your-input" placeholder="Enter oz">
+        <button onclick="addWater('you')">Add</button>
+        <p>Total: <span id="your-total">0</span> oz</p>
+
+        <!-- Friend Section -->
+        <h2>Your Friend</h2>
+        <input type="number" id="friend-input" placeholder="Enter oz">
+        <button onclick="addWater('friend')">Add</button>
+        <p>Total: <span id="friend-total">0</span> oz</p>
     </div>
 
-    <!-- Your existing Firebase script here -->
+    <script>
+        let yourTotal = 0;
+        let friendTotal = 0;
+
+        function addWater(person) {
+            if (person === 'you') {
+                let amount = parseFloat(document.getElementById("your-input").value);
+                if (!isNaN(amount) && amount > 0) {
+                    yourTotal += amount;
+                    document.getElementById("your-total").innerText = yourTotal;
+                    document.getElementById("your-input").value = "";
+                }
+            } else {
+                let amount = parseFloat(document.getElementById("friend-input").value);
+                if (!isNaN(amount) && amount > 0) {
+                    friendTotal += amount;
+                    document.getElementById("friend-total").innerText = friendTotal;
+                    document.getElementById("friend-input").value = "";
+                }
+            }
+        }
+    </script>
 </body>
 </html>
