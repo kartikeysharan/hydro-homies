@@ -16,17 +16,16 @@
         .container {
             text-align: center;
             background: #ffffff;
-            padding: 40px 20px;
+            padding: 30px 20px;
             border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-            width: 90%;
-            max-width: 450px;
+            width: 95%;
+            max-width: 500px;
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
             color: #00796b;
+            margin-bottom: 10px;
         }
 
         h2 {
@@ -36,101 +35,194 @@
 
         input {
             width: 60%;
-            padding: 12px;
+            padding: 10px;
             margin: 8px 0;
-            font-size: 1rem;
             border: 2px solid #00796b;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         button {
-            padding: 12px 16px;
-            font-size: 1rem;
+            padding: 8px 14px;
+            margin: 4px;
             border: none;
-            border-radius: 10px;
-            background-color: #26a69a;
-            color: white;
+            border-radius: 8px;
             cursor: pointer;
-            margin: 5px;
+            background: #26a69a;
+            color: white;
         }
 
         button:hover {
-            background-color: #00796b;
+            background: #00796b;
         }
 
-        .quick-btn {
-            background-color: #00796b;
-        }
-
-        .quick-btn:hover {
-            background-color: #004d40;
-        }
-
-        p {
-            font-size: 1.2rem;
+        .progress-container {
+            background: #ddd;
+            border-radius: 20px;
+            height: 20px;
+            width: 100%;
             margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: #00796b;
+            transition: width 0.4s ease;
+        }
+
+        #winner {
+            font-size: 1.3rem;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #004d40;
+        }
+
+        .goal-input {
+            width: 100px;
+        }
+
+        .reset-btn {
+            background: #d32f2f;
+        }
+
+        .reset-btn:hover {
+            background: #b71c1c;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Hydro Homies 💧</h1>
+<div class="container">
+    <h1>Hydro Homies 💧</h1>
 
-        <!-- Your Section -->
-        <h2>You</h2>
-
-        <button class="quick-btn" onclick="addWater('you', 26)">+26 oz</button>
-        <br>
-
-        <input type="number" id="your-input" placeholder="Custom oz">
-        <button onclick="addCustomWater('you')">Add</button>
-
-        <p>Total: <span id="your-total">0</span> oz</p>
-
-        <!-- Friend Section -->
-        <h2>Your Friend</h2>
-
-        <button class="quick-btn" onclick="addWater('friend', 32)">+32 oz</button>
-        <button class="quick-btn" onclick="addWater('friend', 16.9)">+16.9 oz</button>
-        <br>
-
-        <input type="number" id="friend-input" placeholder="Custom oz">
-        <button onclick="addCustomWater('friend')">Add</button>
-
-        <p>Total: <span id="friend-total">0</span> oz</p>
+    <div>
+        Daily Goal:
+        <input type="number" id="goal-input" class="goal-input" value="120">
+        oz
+        <button onclick="updateGoal()">Set Goal</button>
     </div>
 
-    <script>
-        let yourTotal = 0;
-        let friendTotal = 0;
+    <!-- YOU -->
+    <h2>You</h2>
 
-        function addWater(person, amount) {
-            if (person === 'you') {
-                yourTotal += amount;
-                document.getElementById("your-total").innerText = yourTotal;
-            } else if (person === 'friend') {
-                friendTotal += amount;
-                document.getElementById("friend-total").innerText = friendTotal;
+    <button onclick="addWater('you', 16)">+16 oz</button>
+    <button onclick="addWater('you', 26)">+26 oz</button>
+    <button onclick="addWater('you', 32)">+32 oz</button>
+
+    <br>
+
+    <input type="number" id="your-input" placeholder="Custom oz">
+    <button onclick="addCustom('you')">Add</button>
+
+    <p>Total: <span id="your-total">0</span> oz</p>
+
+    <div class="progress-container">
+        <div id="your-progress" class="progress-bar"></div>
+    </div>
+
+    <!-- FRIEND -->
+    <h2>Your Friend</h2>
+
+    <button onclick="addWater('friend', 16.9)">+16.9 oz</button>
+    <button onclick="addWater('friend', 32)">+32 oz</button>
+
+    <br>
+
+    <input type="number" id="friend-input" placeholder="Custom oz">
+    <button onclick="addCustom('friend')">Add</button>
+
+    <p>Total: <span id="friend-total">0</span> oz</p>
+
+    <div class="progress-container">
+        <div id="friend-progress" class="progress-bar"></div>
+    </div>
+
+    <div id="winner">Let the hydration battle begin 😤💧</div>
+
+    <br>
+    <button class="reset-btn" onclick="resetDay()">Reset Day</button>
+</div>
+
+<script>
+    let yourTotal = parseFloat(localStorage.getItem("yourTotal")) || 0;
+    let friendTotal = parseFloat(localStorage.getItem("friendTotal")) || 0;
+    let goal = parseFloat(localStorage.getItem("goal")) || 120;
+
+    document.getElementById("goal-input").value = goal;
+
+    function saveData() {
+        localStorage.setItem("yourTotal", yourTotal);
+        localStorage.setItem("friendTotal", friendTotal);
+        localStorage.setItem("goal", goal);
+    }
+
+    function updateUI() {
+        document.getElementById("your-total").innerText = yourTotal.toFixed(1);
+        document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
+
+        let yourPercent = Math.min((yourTotal / goal) * 100, 100);
+        let friendPercent = Math.min((friendTotal / goal) * 100, 100);
+
+        document.getElementById("your-progress").style.width = yourPercent + "%";
+        document.getElementById("friend-progress").style.width = friendPercent + "%";
+
+        updateWinner();
+        saveData();
+    }
+
+    function addWater(person, amount) {
+        if (person === "you") {
+            yourTotal += amount;
+        } else {
+            friendTotal += amount;
+        }
+        updateUI();
+    }
+
+    function addCustom(person) {
+        if (person === "you") {
+            let val = parseFloat(document.getElementById("your-input").value);
+            if (!isNaN(val) && val > 0) {
+                yourTotal += val;
+                document.getElementById("your-input").value = "";
+            }
+        } else {
+            let val = parseFloat(document.getElementById("friend-input").value);
+            if (!isNaN(val) && val > 0) {
+                friendTotal += val;
+                document.getElementById("friend-input").value = "";
             }
         }
+        updateUI();
+    }
 
-        function addCustomWater(person) {
-            if (person === 'you') {
-                let amount = parseFloat(document.getElementById("your-input").value);
-                if (!isNaN(amount) && amount > 0) {
-                    yourTotal += amount;
-                    document.getElementById("your-total").innerText = yourTotal;
-                    document.getElementById("your-input").value = "";
-                }
-            } else if (person === 'friend') {
-                let amount = parseFloat(document.getElementById("friend-input").value);
-                if (!isNaN(amount) && amount > 0) {
-                    friendTotal += amount;
-                    document.getElementById("friend-total").innerText = friendTotal;
-                    document.getElementById("friend-input").value = "";
-                }
-            }
+    function updateGoal() {
+        let newGoal = parseFloat(document.getElementById("goal-input").value);
+        if (!isNaN(newGoal) && newGoal > 0) {
+            goal = newGoal;
+            updateUI();
         }
-    </script>
+    }
+
+    function updateWinner() {
+        let text = "";
+        if (yourTotal > friendTotal) {
+            text = "🏆 You're winning today!";
+        } else if (friendTotal > yourTotal) {
+            text = "🏆 Your friend is winning today!";
+        } else {
+            text = "It's tied! Stay hydrated 😤💧";
+        }
+        document.getElementById("winner").innerText = text;
+    }
+
+    function resetDay() {
+        yourTotal = 0;
+        friendTotal = 0;
+        updateUI();
+    }
+
+    updateUI();
+</script>
 </body>
 </html>
