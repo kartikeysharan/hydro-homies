@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Hydro Homies Tracker 🌊</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         body {
             margin: 0;
@@ -23,8 +24,9 @@
             max-width: 500px;
         }
 
-        h1 { color: #00796b; }
-        h2 { margin-top: 25px; color: #004d40; }
+        h1 { color: #00796b; margin-bottom: 5px; }
+        h2 { margin-top: 25px; color: #004d40; margin-bottom: 10px; }
+        .goal-text { font-size: 1.2rem; color: #00796b; margin-bottom: 20px; }
 
         button {
             padding: 8px 14px;
@@ -34,6 +36,7 @@
             cursor: pointer;
             background: #26a69a;
             color: white;
+            font-weight: bold;
         }
 
         button:hover { background: #00796b; }
@@ -44,6 +47,7 @@
             margin-top: 8px;
             border: 2px solid #00796b;
             border-radius: 8px;
+            outline: none;
         }
 
         .progress-container {
@@ -60,8 +64,7 @@
             height: 100%;
             width: 0%;
             background: linear-gradient(45deg, #4dd0e1, #00796b);
-            transition: width 0.6s ease;
-            position: relative;
+            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .splash { animation: splashAnim 0.6s ease; }
@@ -72,19 +75,19 @@
             100% { transform: scaleY(1); }
         }
 
-        .percentage { font-size: 0.9rem; margin-top: -5px; }
-        #winner { font-weight: bold; margin-top: 15px; color: #004d40; }
+        .percentage { font-size: 0.9rem; margin-top: -5px; color: #555; }
+        #winner { font-weight: bold; margin-top: 20px; color: #004d40; font-size: 1.1rem; }
 
-        .reset-btn { background: #d32f2f; margin-top: 15px; }
-        .reset-btn:hover { background: #b71c1c; }
+        .reset-btn { background: #d32f2f; margin-top: 25px; font-size: 0.8rem; opacity: 0.8; }
+        .reset-btn:hover { background: #b71c1c; opacity: 1; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Hydro Homies ⛲</h1>
-    <p><strong>Daily Goal: 120 oz</strong></p>
+    <p class="goal-text">Daily Goal: <strong>100 oz</strong></p>
 
-    <h2>You</h2>
+    <h2>Kartikey</h2>
     <button onclick="addWater('you', 16)">+16 oz</button>
     <button onclick="addWater('you', 26)">+26 oz</button>
     <button onclick="addWater('you', 32)">+32 oz</button>
@@ -97,7 +100,9 @@
     </div>
     <div class="percentage">Progress: <span id="your-percent">0</span>%</div>
 
-    <h2>Your Friend</h2>
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <h2>Marcee</h2>
     <button onclick="addWater('friend', 16.9)">+16.9 oz</button>
     <button onclick="addWater('friend', 32)">+32 oz</button>
     <br>
@@ -130,10 +135,12 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const hydrationRef = ref(db, "hydration");
-const goal = 120;
+const goal = 100; // Updated goal
 
 let yourTotal = 0;
 let friendTotal = 0;
+let kFinished = false;
+let mFinished = false;
 
 // Live-sync listener
 onValue(hydrationRef, (snapshot) => {
@@ -157,6 +164,15 @@ function saveData() {
     });
 }
 
+function celebrate() {
+    confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#4dd0e1', '#00796b', '#ffffff']
+    });
+}
+
 function updateUI(shouldSave = true) {
     const yourBar = document.getElementById("your-progress");
     const friendBar = document.getElementById("friend-progress");
@@ -164,14 +180,24 @@ function updateUI(shouldSave = true) {
     document.getElementById("your-total").innerText = yourTotal.toFixed(1);
     document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
 
-    let yourPercent = Math.min((yourTotal / goal) * 100, 100);
-    let friendPercent = Math.min((friendTotal / goal) * 100, 100);
+    let yourPercent = (yourTotal / goal) * 100;
+    let friendPercent = (friendTotal / goal) * 100;
 
-    yourBar.style.width = yourPercent + "%";
-    friendBar.style.width = friendPercent + "%";
+    // Check for goal completion to trigger confetti
+    if (yourPercent >= 100 && !kFinished) {
+        celebrate();
+        kFinished = true;
+    }
+    if (friendPercent >= 100 && !mFinished) {
+        celebrate();
+        mFinished = true;
+    }
 
-    document.getElementById("your-percent").innerText = yourPercent.toFixed(0);
-    document.getElementById("friend-percent").innerText = friendPercent.toFixed(0);
+    yourBar.style.width = Math.min(yourPercent, 100) + "%";
+    friendBar.style.width = Math.min(friendPercent, 100) + "%";
+
+    document.getElementById("your-percent").innerText = Math.floor(yourPercent);
+    document.getElementById("friend-percent").innerText = Math.floor(friendPercent);
 
     updateWinner();
 
@@ -205,16 +231,20 @@ window.addCustom = function(person) {
 
 function updateWinner() {
     let text = "";
-    if (yourTotal > friendTotal) text = "🏆 You're winning!";
-    else if (friendTotal > yourTotal) text = "🏆 Your friend is winning!";
+    if (yourTotal > friendTotal) text = "🏆 Kartikey is winning!";
+    else if (friendTotal > yourTotal) text = "🏆 Marcee is winning!";
     else text = "It's tied! Stay hydrated 😤💧";
     document.getElementById("winner").innerText = text;
 }
 
 window.resetDay = function() {
-    yourTotal = 0;
-    friendTotal = 0;
-    updateUI(true);
+    if(confirm("Are you sure you want to reset the day?")) {
+        yourTotal = 0;
+        friendTotal = 0;
+        kFinished = false;
+        mFinished = false;
+        updateUI(true);
+    }
 };
 </script>
 </body>
