@@ -51,6 +51,7 @@
             border-radius: 12px;
             font-weight: bold;
             border: 1px solid #ffe0b2;
+            white-space: nowrap;
         }
 
         .btn-group { margin-bottom: 10px; margin-top: 15px; }
@@ -80,6 +81,7 @@
             color: white;
             border: none;
             font-weight: bold;
+            cursor: pointer;
         }
 
         input {
@@ -154,15 +156,23 @@
             font-size: 1.2rem;
         }
 
+        .reset-area {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
         .reset-btn { 
             background: none; 
             color: #b0bec5; 
             border: none; 
             cursor: pointer; 
             font-size: 0.75rem; 
-            margin-top: 30px;
             text-decoration: underline;
         }
+
+        .reset-btn:hover { color: #d32f2f; }
     </style>
 </head>
 <body>
@@ -183,7 +193,7 @@
     <button class="add-btn" onclick="addCustom('you')">Add</button>
     <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
     <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
-    <div id="your-cheer" class="cheer-box">Ready, King?</div>
+    <div id="your-cheer" class="cheer-box">Ready?</div>
 
     <hr style="border: 0; border-top: 1px solid #f1f1f1; margin: 30px 0;">
 
@@ -199,13 +209,16 @@
     <button class="add-btn" onclick="addCustom('friend')">Add</button>
     <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
     <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
-    <div id="friend-cheer" class="cheer-box">Go Queen!</div>
+    <div id="friend-cheer" class="cheer-box">Take that first sip!</div>
 
     <div id="winner-container">
-        <div id="winner">WAR IN PROGRESS... 😤</div>
+        <div id="winner">HYDRATION WAR IN PROGRESS... 😤</div>
     </div>
     
-    <button class="reset-btn" onclick="resetDay()">Manual Reset</button>
+    <div class="reset-area">
+        <button class="reset-btn" onclick="resetDay()">Reset Water</button>
+        <button class="reset-btn" onclick="resetStreaks()" style="color: #ffab91;">Reset Streak</button>
+    </div>
 </div>
 
 <script type="module">
@@ -236,8 +249,8 @@ function getMessages(user) {
     const title = user === "Kartikey" ? "King" : "Queen";
     const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
     return [
-        `Keep going, ${title}! 🌊`,
-        `Glowing! ✨`,
+        `Keep going, water warrior! 🌊`,
+        `Your skin is already glowing! ✨`,
         `Legendary gulp. 👑`,
         `${opp} is shaking! 👟`,
         `Hydration ${title} behavior.`
@@ -252,30 +265,30 @@ onValue(hydrationRef, (snapshot) => {
         kStreak = data.kStreak || 0;
         mStreak = data.mStreak || 0;
         lastResetDate = data.lastResetDate || "";
-        checkMidnightReset();
+        
+        const today = new Date().toLocaleDateString();
+        if (lastResetDate && lastResetDate !== today) {
+            handleMidnightReset();
+        } else if (!lastResetDate) {
+            set(hydrationRef, { ...data, lastResetDate: today });
+        }
     }
     updateUI(null);
 });
 
-// Midnight Logic
-function checkMidnightReset() {
+function handleMidnightReset() {
     const today = new Date().toLocaleDateString();
-    if (lastResetDate && lastResetDate !== today) {
-        // Evaluate streaks before clearing
-        const newKStreak = yourTotal >= goal ? kStreak + 1 : 0;
-        const newMStreak = friendTotal >= goal ? mStreak + 1 : 0;
-        
-        set(hydrationRef, {
-            yourTotal: 0,
-            friendTotal: 0,
-            kStreak: newKStreak,
-            mStreak: newMStreak,
-            lastResetDate: today,
-            lastUpdated: serverTimestamp()
-        });
-    } else if (!lastResetDate) {
-        set(hydrationRef, { ...snapshot.val(), lastResetDate: today });
-    }
+    const newKStreak = yourTotal >= goal ? kStreak + 1 : 0;
+    const newMStreak = friendTotal >= goal ? mStreak + 1 : 0;
+    
+    set(hydrationRef, {
+        yourTotal: 0,
+        friendTotal: 0,
+        kStreak: newKStreak,
+        mStreak: newMStreak,
+        lastResetDate: today,
+        lastUpdated: serverTimestamp()
+    });
 }
 
 function celebrate() {
@@ -301,7 +314,7 @@ function updateUI(entryFrom) {
     const mCheer = document.getElementById("friend-cheer");
 
     if (kPct >= 100) {
-        kCheer.innerHTML = `<div class="goal-badge">✨ KING KARTIKEY IS HYDRATED ✨</div>`;
+        kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
         if (entryFrom === 'you') celebrate();
     } else if (entryFrom === 'you') {
         const msgs = getMessages("Kartikey");
@@ -309,7 +322,7 @@ function updateUI(entryFrom) {
     }
 
     if (mPct >= 100) {
-        mCheer.innerHTML = `<div class="goal-badge">✨ QUEEN MARCEE IS HYDRATED ✨</div>`;
+        mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
         if (entryFrom === 'friend') celebrate();
     } else if (entryFrom === 'friend') {
         const msgs = getMessages("Marcee");
@@ -321,13 +334,13 @@ function updateUI(entryFrom) {
 
     updateWinner();
 
-    if (entryFrom) {
+    if (entryFrom && entryFrom !== 'null') {
         set(hydrationRef, {
             yourTotal: parseFloat(yourTotal.toFixed(1)),
             friendTotal: parseFloat(friendTotal.toFixed(1)),
             kStreak: kStreak,
             mStreak: mStreak,
-            lastResetDate: new Date().toLocaleDateString(),
+            lastResetDate: lastResetDate || new Date().toLocaleDateString(),
             lastUpdated: serverTimestamp()
         });
     }
@@ -337,7 +350,7 @@ function updateWinner() {
     let winDiv = document.getElementById("winner");
     if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is winning";
     else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is winning";
-    else winDiv.innerText = "WAR TIED 😤";
+    else winDiv.innerText = "HYDRATION WAR TIED 😤";
 }
 
 window.addWater = function(p, a) {
@@ -356,8 +369,15 @@ window.addCustom = function(p) {
 };
 
 window.resetDay = function() {
-    if(confirm("Manual reset? This won't affect streaks.")) {
+    if(confirm("Wipe today's water? Streaks will stay safe.")) {
         yourTotal = 0; friendTotal = 0;
+        updateUI('reset');
+    }
+};
+
+window.resetStreaks = function() {
+    if(confirm("Are you SURE you want to kill the streaks? This cannot be undone!")) {
+        kStreak = 0; mStreak = 0;
         updateUI('reset');
     }
 };
