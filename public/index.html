@@ -22,7 +22,7 @@
             border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             width: 95%;
-            max-width: 550px; /* Wider for better layout */
+            max-width: 550px;
         }
 
         h1 { color: #00796b; margin-bottom: 5px; }
@@ -51,7 +51,6 @@
             outline: none;
         }
 
-        /* --- WATER BAR STYLING --- */
         .progress-container {
             background: #eee;
             border-radius: 20px;
@@ -71,7 +70,6 @@
             position: relative;
         }
 
-        /* Wave Animation Layer */
         .progress-bar::after {
             content: "";
             position: absolute;
@@ -85,41 +83,59 @@
             100% { transform: translateX(100%); }
         }
 
-        .splash { animation: splashAnim 0.6s ease; }
-        @keyframes splashAnim {
-            0% { transform: scaleY(1); }
-            50% { transform: scaleY(1.2); }
-            100% { transform: scaleY(1); }
-        }
-
-        /* --- MESSAGE STYLING --- */
         .cheer-box {
-            min-height: 40px; /* Reserves space so UI doesn't jump */
+            min-height: 40px;
             margin: 10px 0;
             font-style: italic;
             font-weight: bold;
             color: #00796b;
             font-size: 1rem;
-            transition: all 0.3s;
         }
 
+        /* --- UPDATED BANNER STYLE --- */
         .goal-banner {
-            background: #ffecb3;
-            color: #ff6f00;
-            padding: 10px;
-            border-radius: 10px;
-            border: 2px dashed #ff6f00;
-            animation: bounce 0.5s infinite alternate;
+            background: linear-gradient(135deg, #ff9800, #ff5722);
+            color: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: slideIn 0.5s ease-out;
+            position: relative;
         }
 
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-5px); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .percentage { font-size: 0.9rem; color: #555; }
-        #winner { font-weight: bold; margin: 25px 0 15px 0; color: #004d40; font-size: 1.3rem; border-top: 2px solid #e0f7fa; padding-top: 15px; }
-        .reset-btn { background: #d32f2f; font-size: 0.8rem; opacity: 0.7; }
+
+        /* --- WAR WINNER SECTION --- */
+        #winner-container {
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 15px;
+            background: #f8fdff;
+            border: 2px solid #e0f7fa;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #winner {
+            font-weight: 900;
+            color: #004d40;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .reset-btn { background: #d32f2f; margin-top: 20px; font-size: 0.8rem; opacity: 0.6; }
     </style>
 </head>
 <body>
@@ -134,12 +150,9 @@
     <br>
     <input type="number" id="your-input" placeholder="Custom oz">
     <button onclick="addCustom('you')">Add</button>
-    
-    <div class="progress-container">
-        <div id="your-progress" class="progress-bar"></div>
-    </div>
-    <div class="percentage"><span id="your-total">0</span> / 100 oz (<span id="your-percent">0</span>%)</div>
-    <div id="your-cheer" class="cheer-box">Waiting for your first sip... 🥤</div>
+    <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
+    <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
+    <div id="your-cheer" class="cheer-box">Waiting for the first gulp...</div>
 
     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
 
@@ -149,15 +162,15 @@
     <br>
     <input type="number" id="friend-input" placeholder="Custom oz">
     <button onclick="addCustom('friend')">Add</button>
-    
-    <div class="progress-container">
-        <div id="friend-progress" class="progress-bar"></div>
-    </div>
-    <div class="percentage"><span id="friend-total">0</span> / 100 oz (<span id="friend-percent">0</span>%)</div>
-    <div id="friend-cheer" class="cheer-box">Stay hydrated, Marcee! 🌊</div>
+    <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
+    <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
+    <div id="friend-cheer" class="cheer-box">Marcee, show 'em how it's done!</div>
 
-    <div id="winner">Hydration battle begins 😤💧</div>
-    <button class="reset-btn" onclick="resetDay()">Reset Day</button>
+    <div id="winner-container">
+        <div id="winner">Hydration war begins 😤💧</div>
+    </div>
+    
+    <button class="reset-btn" onclick="resetDay()">Reset Tracker</button>
 </div>
 
 <script type="module">
@@ -183,17 +196,20 @@ let friendTotal = 0;
 let kFinished = false;
 let mFinished = false;
 
-const funnyMessages = [
-    "Look at you go, Water Warrior! ⚔️",
-    "Your skin is glowing already! ✨",
-    "Gulp gulp gulp! 🌊",
-    "Marcee/Kartikey is shaking in their boots! 👟",
-    "Absolute hydration legend behavior. 👑",
-    "One step closer to becoming a fish. 🐟",
-    "That's that high-quality H2O! 💧",
-    "You're making the desert jealous. 🏜️",
-    "Hydration levels: CRITICAL (in a good way). 🚨"
-];
+// Dynamic funny messages
+function getMessages(user) {
+    const opponent = user === "Kartikey" ? "Marcee" : "Kartikey";
+    return [
+        `Look at you go, Water Warrior! ⚔️`,
+        `Your skin is glowing already! ✨`,
+        `Gulp gulp gulp! 🌊`,
+        `${opponent} is shaking in their boots! 👟`,
+        `Absolute hydration legend behavior. 👑`,
+        `One step closer to becoming a fish. 🐟`,
+        `That's that high-quality H2O! 💧`,
+        `You're making ${opponent} look thirsty. 🌵`
+    ];
+}
 
 onValue(hydrationRef, (snapshot) => {
     const data = snapshot.val();
@@ -201,19 +217,11 @@ onValue(hydrationRef, (snapshot) => {
         yourTotal = data.yourTotal || 0;
         friendTotal = data.friendTotal || 0;
     }
-    updateUI(false);
+    updateUI(null);
 });
 
-function saveData() {
-    set(hydrationRef, {
-        yourTotal: parseFloat(yourTotal.toFixed(1)),
-        friendTotal: parseFloat(friendTotal.toFixed(1)),
-        lastUpdated: serverTimestamp()
-    });
-}
-
 function celebrate() {
-    const duration = 3 * 1000;
+    const duration = 3000;
     const end = Date.now() + duration;
     (function frame() {
         confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0, y: 0.6 }, colors: ['#ff0000', '#ffd700'] });
@@ -222,7 +230,7 @@ function celebrate() {
     }());
 }
 
-function updateUI(isNewEntry = true) {
+function updateUI(entryFrom) {
     const kBar = document.getElementById("your-progress");
     const mBar = document.getElementById("friend-progress");
     const kCheer = document.getElementById("your-cheer");
@@ -234,39 +242,59 @@ function updateUI(isNewEntry = true) {
     let kPercent = (yourTotal / goal) * 100;
     let mPercent = (friendTotal / goal) * 100;
 
-    // Handle Goal Banners
+    // KARTIKEY LOGIC
     if (kPercent >= 100) {
-        kCheer.innerHTML = "<div class='goal-banner'>🏆 KARTIKEY IS FULLY HYDRATED! 🏆</div>";
+        kCheer.innerHTML = `<div class="goal-banner">🔥 GOAL MET: KARTIKEY IS A GOD 🔥</div>`;
         if (!kFinished) { celebrate(); kFinished = true; }
-    } else if (isNewEntry && isNewEntry === 'you') {
-        kCheer.innerText = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+        // Auto-remove banner after 8 seconds
+        setTimeout(() => { if(kPercent >= 100) kCheer.innerHTML = "🏆 Goal Smashed!"; }, 8000);
+    } else if (entryFrom === 'you') {
+        const msgs = getMessages("Kartikey");
+        kCheer.innerText = msgs[Math.floor(Math.random() * msgs.length)];
     }
 
+    // MARCEE LOGIC
     if (mPercent >= 100) {
-        mCheer.innerHTML = "<div class='goal-banner'>🏆 MARCEE IS FULLY HYDRATED! 🏆</div>";
+        mCheer.innerHTML = `<div class="goal-banner">⚡ GOAL MET: MARCEE IS UNSTOPPABLE ⚡</div>`;
         if (!mFinished) { celebrate(); mFinished = true; }
-    } else if (isNewEntry && isNewEntry === 'friend') {
-        mCheer.innerText = funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+        setTimeout(() => { if(mPercent >= 100) mCheer.innerHTML = "🏆 Goal Smashed!"; }, 8000);
+    } else if (entryFrom === 'friend') {
+        const msgs = getMessages("Marcee");
+        mCheer.innerText = msgs[Math.floor(Math.random() * msgs.length)];
     }
 
     kBar.style.width = Math.min(kPercent, 100) + "%";
     mBar.style.width = Math.min(mPercent, 100) + "%";
-    document.getElementById("your-percent").innerText = Math.floor(kPercent);
-    document.getElementById("friend-percent").innerText = Math.floor(mPercent);
 
     updateWinner();
 
-    if (isNewEntry) {
-        kBar.classList.add("splash"); mBar.classList.add("splash");
-        setTimeout(() => { kBar.classList.remove("splash"); mBar.classList.remove("splash"); }, 600);
-        saveData();
+    if (entryFrom) {
+        set(hydrationRef, {
+            yourTotal: parseFloat(yourTotal.toFixed(1)),
+            friendTotal: parseFloat(friendTotal.toFixed(1)),
+            lastUpdated: serverTimestamp()
+        });
+    }
+}
+
+function updateWinner() {
+    let winDiv = document.getElementById("winner");
+    
+    if (yourTotal >= 100 && friendTotal >= 100) {
+        winDiv.innerHTML = "🏅 ELITE HYDRATION: BOTH LEGENDS REACHED THE GOAL! 🏅";
+    } else if (yourTotal > friendTotal) {
+        winDiv.innerText = "🏆 Kartikey is leading the war!";
+    } else if (friendTotal > yourTotal) {
+        winDiv.innerText = "🏆 Marcee is crushing it!";
+    } else {
+        winDiv.innerText = "The hydration war is tied! 😤💧";
     }
 }
 
 window.addWater = function(person, amount) {
     if (person === "you") yourTotal += amount;
     else friendTotal += amount;
-    updateUI(person); // Pass who updated it to trigger specific message
+    updateUI(person);
 };
 
 window.addCustom = function(person) {
@@ -280,20 +308,12 @@ window.addCustom = function(person) {
     }
 };
 
-function updateWinner() {
-    let text = "";
-    if (yourTotal > friendTotal) text = "🏆 Kartikey is leading the war!";
-    else if (friendTotal > yourTotal) text = "🏆 Marcee is crushing it!";
-    else text = "The hydration war is tied! 😤💧";
-    document.getElementById("winner").innerText = text;
-}
-
 window.resetDay = function() {
-    if(confirm("Wipe the data? New day, new water!")) {
+    if(confirm("New day? Resetting the war...")) {
         yourTotal = 0; friendTotal = 0; kFinished = false; mFinished = false;
-        document.getElementById("your-cheer").innerText = "Waiting for your first sip... 🥤";
-        document.getElementById("friend-cheer").innerText = "Stay hydrated, Marcee! 🌊";
-        updateUI(true);
+        document.getElementById("your-cheer").innerText = "Waiting for the first gulp...";
+        document.getElementById("friend-cheer").innerText = "Marcee, show 'em how it's done!";
+        updateUI('reset');
     }
 };
 </script>
