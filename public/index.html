@@ -10,7 +10,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: Arial, sans-serif;
             background: #e0f7fa;
             padding: 20px;
         }
@@ -18,174 +18,156 @@
         .container {
             text-align: center;
             background: #ffffff;
-            padding: 40px 25px;
-            border-radius: 30px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
             width: 95%;
-            max-width: 500px;
+            max-width: 550px;
         }
 
-        h1 { color: #00796b; margin-bottom: 5px; font-weight: 800; }
-        .goal-text { font-size: 1.1rem; color: #00796b; margin-bottom: 30px; opacity: 0.8; }
+        h1 { color: #00796b; margin-bottom: 5px; }
+        h2 { margin-top: 25px; color: #004d40; margin-bottom: 10px; }
+        .goal-text { font-size: 1.2rem; color: #00796b; margin-bottom: 20px; }
 
-        /* --- BIGGER NAMES --- */
-        h2 { 
-            margin-top: 30px; 
-            color: #004d40; 
-            margin-bottom: 15px; 
-            font-size: 1.8rem; 
-            font-weight: 700;
-        }
-
-        /* --- BIGGER OZ OPTIONS --- */
-        .btn-group { margin-bottom: 10px; }
-        button.oz-btn {
-            padding: 12px 18px;
-            margin: 5px;
+        button {
+            padding: 8px 14px;
+            margin: 4px;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
             background: #26a69a;
             color: white;
             font-weight: bold;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 0 #00796b;
         }
 
-        button.oz-btn:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 #00796b;
-        }
-
-        button.add-btn {
-            background: #00796b;
-            padding: 8px 15px;
-            border-radius: 8px;
-            color: white;
-            border: none;
-            font-weight: bold;
-        }
+        button:hover { background: #00796b; }
 
         input {
-            width: 80px;
+            width: 40%;
             padding: 8px;
-            border: 2px solid #e0f2f1;
+            margin-top: 8px;
+            border: 2px solid #00796b;
             border-radius: 8px;
             outline: none;
-            text-align: center;
-            font-size: 1rem;
         }
 
-        /* --- THINNER PROGRESS BAR --- */
         .progress-container {
-            background: #f1f1f1;
-            border-radius: 10px;
-            height: 12px; /* Thinner */
+            background: #eee;
+            border-radius: 20px;
+            height: 35px;
             width: 100%;
-            margin: 20px 0 10px 0;
+            margin: 15px 0 5px 0;
             overflow: hidden;
             position: relative;
+            border: 2px solid #b2dfdb;
         }
 
         .progress-bar {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #4fc3f7, #00796b);
-            transition: width 1s cubic-bezier(0.1, 0.5, 0.2, 1);
-            border-radius: 10px;
+            background: linear-gradient(45deg, #4fc3f7, #00796b);
+            transition: width 0.8s cubic-bezier(0.1, 0.5, 0.2, 1);
+            position: relative;
         }
 
-        /* --- NEW MINIMALIST GOAL BANNER --- */
-        .goal-badge {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 20px;
-            background: rgba(0, 151, 167, 0.1);
-            border: 1px solid #0097a7;
-            color: #006064;
-            border-radius: 50px;
-            font-weight: 800;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            animation: pulse 2s infinite;
+        .progress-bar::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: waveFlow 2s infinite linear;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 151, 167, 0.4); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 151, 167, 0); }
-            100% { transform: scale(1); }
+        @keyframes waveFlow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
 
         .cheer-box {
-            min-height: 25px;
-            margin: 5px 0;
-            font-size: 0.9rem;
-            color: #78909c;
-            font-weight: 500;
+            min-height: 40px;
+            margin: 10px 0;
+            font-style: italic;
+            font-weight: bold;
+            color: #00796b;
+            font-size: 1rem;
         }
 
-        .percentage { font-size: 0.85rem; font-weight: bold; color: #546e7a; margin-top: 5px; }
+        /* --- UPDATED BANNER STYLE --- */
+        .goal-banner {
+            background: linear-gradient(135deg, #ff9800, #ff5722);
+            color: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+            font-size: 1.1rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: slideIn 0.5s ease-out;
+            position: relative;
+        }
 
-        /* --- WINNER BANNER --- */
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .percentage { font-size: 0.9rem; color: #555; }
+
+        /* --- WAR WINNER SECTION --- */
         #winner-container {
-            margin-top: 40px;
-            padding: 20px;
-            border-top: 1px solid #e0f2f1;
+            margin-top: 30px;
+            padding: 15px;
+            border-radius: 15px;
+            background: #f8fdff;
+            border: 2px solid #e0f7fa;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #winner {
-            font-weight: 800;
+            font-weight: 900;
             color: #004d40;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
         }
 
-        .reset-btn { 
-            background: none; 
-            color: #b0bec5; 
-            border: none; 
-            cursor: pointer; 
-            font-size: 0.75rem; 
-            margin-top: 30px;
-            text-decoration: underline;
-        }
+        .reset-btn { background: #d32f2f; margin-top: 20px; font-size: 0.8rem; opacity: 0.6; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Hydro Homies ⛲</h1>
-    <p class="goal-text">Daily Target: 100 oz</p>
+    <p class="goal-text">Daily Goal: <strong>100 oz</strong></p>
 
-    <h2 id="name-you">Kartikey</h2>
-    <div class="btn-group">
-        <button class="oz-btn" onclick="addWater('you', 16)">16 oz</button>
-        <button class="oz-btn" onclick="addWater('you', 26)">26 oz</button>
-        <button class="oz-btn" onclick="addWater('you', 32)">32 oz</button>
-    </div>
-    <input type="number" id="your-input" placeholder="0">
-    <button class="add-btn" onclick="addCustom('you')">Add</button>
-    
+    <h2>Kartikey</h2>
+    <button onclick="addWater('you', 16)">+16 oz</button>
+    <button onclick="addWater('you', 26)">+26 oz</button>
+    <button onclick="addWater('you', 32)">+32 oz</button>
+    <br>
+    <input type="number" id="your-input" placeholder="Custom oz">
+    <button onclick="addCustom('you')">Add</button>
     <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
     <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
-    <div id="your-cheer" class="cheer-box">Ready?</div>
+    <div id="your-cheer" class="cheer-box">Waiting for the first gulp...</div>
 
-    <hr style="border: 0; border-top: 1px solid #f1f1f1; margin: 30px 0;">
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
 
-    <h2 id="name-friend">Marcee</h2>
-    <div class="btn-group">
-        <button class="oz-btn" onclick="addWater('friend', 16.9)">16.9 oz</button>
-        <button class="oz-btn" onclick="addWater('friend', 32)">32 oz</button>
-    </div>
-    <input type="number" id="friend-input" placeholder="0">
-    <button class="add-btn" onclick="addCustom('friend')">Add</button>
-    
+    <h2>Marcee</h2>
+    <button onclick="addWater('friend', 16.9)">+16.9 oz</button>
+    <button onclick="addWater('friend', 32)">+32 oz</button>
+    <br>
+    <input type="number" id="friend-input" placeholder="Custom oz">
+    <button onclick="addCustom('friend')">Add</button>
     <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
     <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
-    <div id="friend-cheer" class="cheer-box">Go Marcee!</div>
+    <div id="friend-cheer" class="cheer-box">Marcee, show 'em how it's done!</div>
 
     <div id="winner-container">
-        <div id="winner">WAR IN PROGRESS... 😤</div>
+        <div id="winner">Hydration war begins 😤💧</div>
     </div>
     
     <button class="reset-btn" onclick="resetDay()">Reset Tracker</button>
@@ -214,9 +196,19 @@ let friendTotal = 0;
 let kFinished = false;
 let mFinished = false;
 
+// Dynamic funny messages
 function getMessages(user) {
-    const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
-    return [`Keep going! 🌊`, `Glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration king/queen behavior.`];
+    const opponent = user === "Kartikey" ? "Marcee" : "Kartikey";
+    return [
+        `Look at you go, Water Warrior! ⚔️`,
+        `Your skin is glowing already! ✨`,
+        `Gulp gulp gulp! 🌊`,
+        `${opponent} is shaking in their boots! 👟`,
+        `Absolute hydration legend behavior. 👑`,
+        `One step closer to becoming a fish. 🐟`,
+        `That's that high-quality H2O! 💧`,
+        `You're making ${opponent} look thirsty. 🌵`
+    ];
 }
 
 onValue(hydrationRef, (snapshot) => {
@@ -247,31 +239,32 @@ function updateUI(entryFrom) {
     document.getElementById("your-total").innerText = yourTotal.toFixed(1);
     document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
 
-    let kPct = (yourTotal / goal) * 100;
-    let mPct = (friendTotal / goal) * 100;
+    let kPercent = (yourTotal / goal) * 100;
+    let mPercent = (friendTotal / goal) * 100;
 
     // KARTIKEY LOGIC
-    if (kPct >= 100) {
-        kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY REACHED THE GOAL ✨</div>`;
+    if (kPercent >= 100) {
+        kCheer.innerHTML = `<div class="goal-banner">🔥 GOAL MET: KARTIKEY IS A GOD 🔥</div>`;
         if (!kFinished) { celebrate(); kFinished = true; }
-        setTimeout(() => { if(kPct >= 100) kCheer.innerHTML = "🏆 Goal Met"; }, 10000);
+        // Auto-remove banner after 8 seconds
+        setTimeout(() => { if(kPercent >= 100) kCheer.innerHTML = "🏆 Goal Smashed!"; }, 8000);
     } else if (entryFrom === 'you') {
         const msgs = getMessages("Kartikey");
         kCheer.innerText = msgs[Math.floor(Math.random() * msgs.length)];
     }
 
     // MARCEE LOGIC
-    if (mPct >= 100) {
-        mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE REACHED THE GOAL ✨</div>`;
+    if (mPercent >= 100) {
+        mCheer.innerHTML = `<div class="goal-banner">⚡ GOAL MET: MARCEE IS UNSTOPPABLE ⚡</div>`;
         if (!mFinished) { celebrate(); mFinished = true; }
-        setTimeout(() => { if(mPct >= 100) mCheer.innerHTML = "🏆 Goal Met"; }, 10000);
+        setTimeout(() => { if(mPercent >= 100) mCheer.innerHTML = "🏆 Goal Smashed!"; }, 8000);
     } else if (entryFrom === 'friend') {
         const msgs = getMessages("Marcee");
         mCheer.innerText = msgs[Math.floor(Math.random() * msgs.length)];
     }
 
-    kBar.style.width = Math.min(kPct, 100) + "%";
-    mBar.style.width = Math.min(mPct, 100) + "%";
+    kBar.style.width = Math.min(kPercent, 100) + "%";
+    mBar.style.width = Math.min(mPercent, 100) + "%";
 
     updateWinner();
 
@@ -286,37 +279,40 @@ function updateUI(entryFrom) {
 
 function updateWinner() {
     let winDiv = document.getElementById("winner");
+    
     if (yourTotal >= 100 && friendTotal >= 100) {
-        winDiv.innerHTML = "🏅 THE WAR IS OVER: BOTH ARE HYDRATED! 🏅";
+        winDiv.innerHTML = "🏅 ELITE HYDRATION: BOTH LEGENDS REACHED THE GOAL! 🏅";
     } else if (yourTotal > friendTotal) {
-        winDiv.innerText = "🏆 Kartikey is winning";
+        winDiv.innerText = "🏆 Kartikey is leading the war!";
     } else if (friendTotal > yourTotal) {
-        winDiv.innerText = "🏆 Marcee is winning";
+        winDiv.innerText = "🏆 Marcee is crushing it!";
     } else {
-        winDiv.innerText = "WAR TIED 😤";
+        winDiv.innerText = "The hydration war is tied! 😤💧";
     }
 }
 
-window.addWater = function(p, a) {
-    if (p === "you") yourTotal += a; else friendTotal += a;
-    updateUI(p);
+window.addWater = function(person, amount) {
+    if (person === "you") yourTotal += amount;
+    else friendTotal += amount;
+    updateUI(person);
 };
 
-window.addCustom = function(p) {
-    const id = p === "you" ? "your-input" : "friend-input";
-    let val = parseFloat(document.getElementById(id).value);
+window.addCustom = function(person) {
+    const inputId = person === "you" ? "your-input" : "friend-input";
+    let val = parseFloat(document.getElementById(inputId).value);
     if (!isNaN(val) && val > 0) {
-        if (p === "you") yourTotal += val; else friendTotal += val;
-        document.getElementById(id).value = "";
-        updateUI(p);
+        if (person === "you") yourTotal += val;
+        else friendTotal += val;
+        document.getElementById(inputId).value = "";
+        updateUI(person);
     }
 };
 
 window.resetDay = function() {
-    if(confirm("Reset the war?")) {
+    if(confirm("New day? Resetting the war...")) {
         yourTotal = 0; friendTotal = 0; kFinished = false; mFinished = false;
-        document.getElementById("your-cheer").innerText = "Ready?";
-        document.getElementById("friend-cheer").innerText = "Go Marcee!";
+        document.getElementById("your-cheer").innerText = "Waiting for the first gulp...";
+        document.getElementById("friend-cheer").innerText = "Marcee, show 'em how it's done!";
         updateUI('reset');
     }
 };
