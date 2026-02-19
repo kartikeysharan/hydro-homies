@@ -3,6 +3,7 @@
 <head>
     <title>Hydro Homies Tracker 🌊</title>
 
+    <!-- Confetti library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -150,9 +151,9 @@ let friendStreak = 0;
 let yourGoalReached = false;
 let friendGoalReached = false;
 let declaredWinner = false;
+let lastDeclaredDate = null;
 
 /* -------- LIVE SYNC -------- */
-
 onValue(hydrationRef, (snapshot) => {
     const data = snapshot.val();
     if (data) {
@@ -160,9 +161,12 @@ onValue(hydrationRef, (snapshot) => {
         friendTotal = data.friendTotal || 0;
         yourStreak = data.yourStreak || 0;
         friendStreak = data.friendStreak || 0;
+        lastDeclaredDate = data.lastDeclaredDate || null;
     } else {
         saveData();
     }
+
+    checkRetroactiveDeclaration(); // NEW: retroactive winner
     updateUI(false);
 });
 
@@ -172,12 +176,12 @@ function saveData() {
         friendTotal,
         yourStreak,
         friendStreak,
-        lastUpdated: serverTimestamp()
+        lastUpdated: serverTimestamp(),
+        lastDeclaredDate: lastDeclaredDate || null
     });
 }
 
 /* -------- UI UPDATE -------- */
-
 function updateUI(shouldSave = true) {
 
     document.getElementById("your-total").innerText = yourTotal.toFixed(1);
@@ -201,7 +205,6 @@ function updateUI(shouldSave = true) {
 }
 
 /* -------- ADD WATER -------- */
-
 window.addWater = function(person, amount) {
     if (person === "you") yourTotal += amount;
     else friendTotal += amount;
@@ -220,7 +223,6 @@ window.addCustom = function(person) {
 };
 
 /* -------- WINNER + CELEBRATION -------- */
-
 function updateWinner() {
 
     if (yourTotal >= goal && !yourGoalReached) {
@@ -259,8 +261,7 @@ function celebrate(message) {
     new Audio("https://www.soundjay.com/human/cheering-01.mp3").play();
 }
 
-/* -------- MIDNIGHT LOGIC -------- */
-
+/* -------- MIDNIGHT TIMER -------- */
 function checkMidnight() {
     const now = new Date();
     const tomorrow = new Date();
@@ -275,29 +276,45 @@ function checkMidnight() {
         }, 8000);
     }, timeUntilMidnight);
 }
+checkMidnight();
 
-function declareWinner() {
+/* -------- RETROACTIVE DECLARATION -------- */
+function checkRetroactiveDeclaration() {
+    const todayStr = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+    if (lastDeclaredDate !== todayStr) {
+        declareWinner(true); // retroactive
+        lastDeclaredDate = todayStr;
+        saveData();
+
+        setTimeout(() => {
+            resetDay();
+        }, 8000);
+    }
+}
+
+function declareWinner(isRetroactive = false) {
 
     declaredWinner = true;
+
     let banner = document.getElementById("victory-banner");
     banner.style.display = "block";
 
     if (yourTotal > friendTotal) {
         banner.innerText = "🏆 YOU WIN TODAY! 💧🔥";
-        yourStreak++;
-    }
-    else if (friendTotal > yourTotal) {
+        if (!isRetroactive) yourStreak++;
+    } else if (friendTotal > yourTotal) {
         banner.innerText = "🏆 FRIEND WINS TODAY! 💧🔥";
-        friendStreak++;
-    }
-    else {
+        if (!isRetroactive) friendStreak++;
+    } else {
         banner.innerText = "🤝 IT'S A TIE!";
     }
 
     celebrate("🎊 DAILY HYDRATION COMPLETE 🎊");
-    saveData();
+
+    if (!isRetroactive) saveData();
 }
 
+/* -------- RESET DAY -------- */
 window.resetDay = function() {
     yourTotal = 0;
     friendTotal = 0;
@@ -307,9 +324,6 @@ window.resetDay = function() {
     document.getElementById("victory-banner").style.display = "none";
     updateUI(true);
 };
-
-checkMidnight();
-
 </script>
 </body>
 </html>
