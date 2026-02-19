@@ -83,7 +83,6 @@
 <div class="container">
     <h1>Hydro Homies ⛲</h1>
     <p><strong>Daily Goal: 120 oz</strong></p>
-    <p><strong>Daily Goal: 100 oz</strong></p>
 
     <h2>You</h2>
     <button onclick="addWater('you', 16)">+16 oz</button>
@@ -130,13 +129,17 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
 const hydrationRef = ref(db, "hydration");
 const goal = 120;
-const goal = 100;
 
 let yourTotal = 0;
 let friendTotal = 0;
 
+// Reference to hydration data
+const hydrationRef = ref(db, "hydration");
+
+// Listen to database changes (live sync)
 // Live-sync listener
 onValue(hydrationRef, (snapshot) => {
     const data = snapshot.val();
@@ -144,13 +147,16 @@ onValue(hydrationRef, (snapshot) => {
         yourTotal = data.yourTotal || 0;
         friendTotal = data.friendTotal || 0;
     } else {
+        // Initialize if empty
         yourTotal = 0;
         friendTotal = 0;
         saveData();
     }
+    updateUI(false); // false = don't save again to DB
     updateUI(false);
 });
 
+// Save totals to Firebase
 function saveData() {
     set(hydrationRef, {
         yourTotal: parseFloat(yourTotal.toFixed(1)),
@@ -159,6 +165,7 @@ function saveData() {
     });
 }
 
+// Update UI with progress bars and winner
 function updateUI(shouldSave = true) {
     const yourBar = document.getElementById("your-progress");
     const friendBar = document.getElementById("friend-progress");
@@ -169,6 +176,9 @@ function updateUI(shouldSave = true) {
     let yourPercent = Math.min((yourTotal / goal) * 100, 100);
     let friendPercent = Math.min((friendTotal / goal) * 100, 100);
 
+    const yourBar = document.getElementById("your-progress");
+    const friendBar = document.getElementById("friend-progress");
+
     yourBar.style.width = yourPercent + "%";
     friendBar.style.width = friendPercent + "%";
 
@@ -177,6 +187,7 @@ function updateUI(shouldSave = true) {
 
     updateWinner();
 
+    // Splash animation when totals change
     // Splash animation
     yourBar.classList.add("splash");
     friendBar.classList.add("splash");
@@ -188,12 +199,14 @@ function updateUI(shouldSave = true) {
     if (shouldSave) saveData();
 }
 
+// Add preset amount of water
 window.addWater = function(person, amount) {
     if (person === "you") yourTotal += amount;
     else friendTotal += amount;
     updateUI(true);
 };
 
+// Add custom amount of water
 window.addCustom = function(person) {
     const inputId = person === "you" ? "your-input" : "friend-input";
     let val = parseFloat(document.getElementById(inputId).value);
@@ -205,6 +218,7 @@ window.addCustom = function(person) {
     }
 };
 
+// Update winner text
 function updateWinner() {
     let text = "";
     if (yourTotal > friendTotal) text = "🏆 You're winning!";
@@ -213,6 +227,7 @@ function updateWinner() {
     document.getElementById("winner").innerText = text;
 }
 
+// Reset totals
 window.resetDay = function() {
     yourTotal = 0;
     friendTotal = 0;
