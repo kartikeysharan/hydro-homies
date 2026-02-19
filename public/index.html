@@ -1,3 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hydro Homies Tracker 🌊</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #e0f7fa;
+        }
+
+        .container {
+            text-align: center;
+            background: #ffffff;
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            width: 95%;
+            max-width: 500px;
+        }
+
+        h1 { color: #00796b; }
+        h2 { margin-top: 25px; color: #004d40; }
+
+        button {
+            padding: 8px 14px;
+            margin: 4px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #26a69a;
+            color: white;
+        }
+
+        button:hover { background: #00796b; }
+
+        input {
+            width: 60%;
+            padding: 8px;
+            margin-top: 8px;
+            border: 2px solid #00796b;
+            border-radius: 8px;
+        }
+
+        .progress-container {
+            background: #ddd;
+            border-radius: 20px;
+            height: 25px;
+            width: 100%;
+            margin: 10px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(45deg, #4dd0e1, #00796b);
+            transition: width 0.6s ease;
+            position: relative;
+        }
+
+        .splash { animation: splashAnim 0.6s ease; }
+
+        @keyframes splashAnim {
+            0% { transform: scaleY(1); }
+            50% { transform: scaleY(1.3); }
+            100% { transform: scaleY(1); }
+        }
+
+        .percentage { font-size: 0.9rem; margin-top: -5px; }
+        #winner { font-weight: bold; margin-top: 15px; color: #004d40; }
+
+        .reset-btn { background: #d32f2f; margin-top: 15px; }
+        .reset-btn:hover { background: #b71c1c; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Hydro Homies ⛲</h1>
+    <p><strong>Daily Goal: 120 oz</strong></p>
+
+    <h2>You</h2>
+    <button onclick="addWater('you', 16)">+16 oz</button>
+    <button onclick="addWater('you', 26)">+26 oz</button>
+    <button onclick="addWater('you', 32)">+32 oz</button>
+    <br>
+    <input type="number" id="your-input" placeholder="Custom oz">
+    <button onclick="addCustom('you')">Add</button>
+    <p>Total: <span id="your-total">0</span> oz</p>
+    <div class="progress-container">
+        <div id="your-progress" class="progress-bar"></div>
+    </div>
+    <div class="percentage">Progress: <span id="your-percent">0</span>%</div>
+
+    <h2>Your Friend</h2>
+    <button onclick="addWater('friend', 16.9)">+16.9 oz</button>
+    <button onclick="addWater('friend', 32)">+32 oz</button>
+    <br>
+    <input type="number" id="friend-input" placeholder="Custom oz">
+    <button onclick="addCustom('friend')">Add</button>
+    <p>Total: <span id="friend-total">0</span> oz</p>
+    <div class="progress-container">
+        <div id="friend-progress" class="progress-bar"></div>
+    </div>
+    <div class="percentage">Progress: <span id="friend-percent">0</span>%</div>
+
+    <div id="winner">Hydration battle begins 😤💧</div>
+    <button class="reset-btn" onclick="resetDay()">Reset Day</button>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -14,31 +129,26 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
+const hydrationRef = ref(db, "hydration");
 const goal = 120;
 
 let yourTotal = 0;
 let friendTotal = 0;
 
-// Reference to hydration data
-const hydrationRef = ref(db, "hydration");
-
-// Listen to database changes (live sync)
+// Live-sync listener
 onValue(hydrationRef, (snapshot) => {
     const data = snapshot.val();
     if (data) {
         yourTotal = data.yourTotal || 0;
         friendTotal = data.friendTotal || 0;
     } else {
-        // Initialize if empty
         yourTotal = 0;
         friendTotal = 0;
         saveData();
     }
-    updateUI(false); // false = don't save again to DB
+    updateUI(false);
 });
 
-// Save totals to Firebase
 function saveData() {
     set(hydrationRef, {
         yourTotal: parseFloat(yourTotal.toFixed(1)),
@@ -47,16 +157,15 @@ function saveData() {
     });
 }
 
-// Update UI with progress bars and winner
 function updateUI(shouldSave = true) {
+    const yourBar = document.getElementById("your-progress");
+    const friendBar = document.getElementById("friend-progress");
+
     document.getElementById("your-total").innerText = yourTotal.toFixed(1);
     document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
 
     let yourPercent = Math.min((yourTotal / goal) * 100, 100);
     let friendPercent = Math.min((friendTotal / goal) * 100, 100);
-
-    const yourBar = document.getElementById("your-progress");
-    const friendBar = document.getElementById("friend-progress");
 
     yourBar.style.width = yourPercent + "%";
     friendBar.style.width = friendPercent + "%";
@@ -66,7 +175,7 @@ function updateUI(shouldSave = true) {
 
     updateWinner();
 
-    // Splash animation when totals change
+    // Splash animation
     yourBar.classList.add("splash");
     friendBar.classList.add("splash");
     setTimeout(() => {
@@ -77,14 +186,12 @@ function updateUI(shouldSave = true) {
     if (shouldSave) saveData();
 }
 
-// Add preset amount of water
 window.addWater = function(person, amount) {
     if (person === "you") yourTotal += amount;
     else friendTotal += amount;
     updateUI(true);
 };
 
-// Add custom amount of water
 window.addCustom = function(person) {
     const inputId = person === "you" ? "your-input" : "friend-input";
     let val = parseFloat(document.getElementById(inputId).value);
@@ -96,7 +203,6 @@ window.addCustom = function(person) {
     }
 };
 
-// Update winner text
 function updateWinner() {
     let text = "";
     if (yourTotal > friendTotal) text = "🏆 You're winning!";
@@ -105,7 +211,6 @@ function updateWinner() {
     document.getElementById("winner").innerText = text;
 }
 
-// Reset totals
 window.resetDay = function() {
     yourTotal = 0;
     friendTotal = 0;
