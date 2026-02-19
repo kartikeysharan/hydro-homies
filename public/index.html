@@ -10,7 +10,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #e0f7fa;
         }
 
@@ -18,140 +18,133 @@
             text-align: center;
             background: #ffffff;
             padding: 30px 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             width: 95%;
-            max-width: 500px;
+            max-width: 450px;
         }
 
         h1 { color: #00796b; margin-bottom: 5px; }
-        h2 { margin-top: 25px; color: #004d40; margin-bottom: 10px; }
-        .goal-text { font-size: 1.2rem; color: #00796b; margin-bottom: 20px; }
+        h2 { margin-top: 20px; color: #004d40; margin-bottom: 10px; }
+        .goal-text { font-size: 1.1rem; color: #00796b; margin-bottom: 20px; }
 
         button {
-            padding: 8px 14px;
-            margin: 4px;
+            padding: 8px 12px;
+            margin: 3px;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             background: #26a69a;
             color: white;
             font-weight: bold;
+            transition: transform 0.1s;
         }
 
+        button:active { transform: scale(0.95); }
         button:hover { background: #00796b; }
 
         input {
-            width: 60%;
+            width: 50%;
             padding: 8px;
             margin-top: 8px;
-            border: 2px solid #00796b;
+            border: 2px solid #b2dfdb;
             border-radius: 8px;
             outline: none;
         }
 
+        /* --- THE WATER PROGRESS BAR --- */
         .progress-container {
-            background: #eee;
-            border-radius: 20px;
-            height: 35px; /* Slightly taller for better effect */
+            background: #f0f0f0;
+            border-radius: 15px;
+            height: 40px;
             width: 100%;
-            margin: 10px 0;
+            margin: 15px 0 5px 0;
             overflow: hidden;
             position: relative;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            border: 2px solid #b2dfdb;
         }
 
-        .progress-bar {
+        .water-fill {
             height: 100%;
             width: 0%;
-            /* Water Gradient with "Wave" pattern */
-            background: linear-gradient(
-                90deg, 
-                #4dd0e1 0%, 
-                #00bcd4 50%, 
-                #0097a7 100%
-            );
-            background-size: 200% 100%;
-            transition: width 0.8s cubic-bezier(0.1, 0.5, 0.2, 1);
+            background: #4fc3f7;
             position: relative;
+            transition: width 1s ease-in-out;
+            overflow: hidden;
         }
 
-        /* The Splashing Water Effect */
-        .progress-bar::after {
+        /* The Sloshing Wave Animation */
+        .water-fill::before {
             content: "";
             position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background-image: radial-gradient(circle, rgba(255,255,255,0.3) 20%, transparent 20%);
-            background-size: 15px 15px;
-            opacity: 0;
-            transition: opacity 0.3s;
+            width: 200%;
+            height: 200%;
+            top: -150%;
+            left: -50%;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 40%;
+            animation: wave 4s infinite linear;
         }
 
-        .splash::after {
-            opacity: 1;
-            animation: bubbles 0.6s infinite;
+        @keyframes wave {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
-        @keyframes bubbles {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 -30px; }
+        /* Impact Slosh Shake */
+        .slosh-shake {
+            animation: shake 0.5s ease-in-out;
         }
 
-        /* Sloshing animation when value changes */
-        @keyframes slosh {
-            0% { transform: scaleX(1); }
-            50% { transform: scaleX(1.02); }
-            100% { transform: scaleX(1); }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(3px) rotate(1deg); }
+            50% { transform: translateX(-3px) rotate(-1deg); }
+            75% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
         }
 
-        .sloshing {
-            animation: slosh 0.4s ease-in-out;
-        }
+        .percentage { font-size: 0.85rem; color: #666; font-weight: bold; }
+        #winner { font-weight: bold; margin-top: 25px; color: #004d40; font-size: 1.2rem; }
 
-        .percentage { font-size: 0.9rem; margin-top: -5px; color: #555; }
-        #winner { font-weight: bold; margin-top: 20px; color: #004d40; font-size: 1.1rem; }
-
-        .reset-btn { background: #d32f2f; margin-top: 25px; font-size: 0.8rem; opacity: 0.8; }
-        .reset-btn:hover { background: #b71c1c; opacity: 1; }
+        .reset-btn { background: #e57373; margin-top: 30px; font-size: 0.75rem; }
+        .reset-btn:hover { background: #d32f2f; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Hydro Homies ⛲</h1>
-    <p class="goal-text">Daily Goal: <strong>100 oz</strong></p>
+    <p class="goal-text">Target: <strong>100 oz</strong></p>
 
     <h2>Kartikey</h2>
-    <button onclick="addWater('you', 16)">+16 oz</button>
-    <button onclick="addWater('you', 26)">+26 oz</button>
-    <button onclick="addWater('you', 32)">+32 oz</button>
-    <br>
-    <input type="number" id="your-input" placeholder="Custom oz">
-    <button onclick="addCustom('you')">Add</button>
-    <p>Total: <span id="your-total">0</span> oz</p>
-    <div class="progress-container">
-        <div id="your-progress" class="progress-bar"></div>
+    <div class="buttons">
+        <button onclick="addWater('you', 16)">+16 oz</button>
+        <button onclick="addWater('you', 26)">+26 oz</button>
+        <button onclick="addWater('you', 32)">+32 oz</button>
     </div>
-    <div class="percentage">Progress: <span id="your-percent">0</span>%</div>
+    <input type="number" id="your-input" placeholder="Custom">
+    <button onclick="addCustom('you')">Add</button>
+    <div class="progress-container" id="your-container">
+        <div id="your-progress" class="water-fill"></div>
+    </div>
+    <div class="percentage"><span id="your-total">0</span> / 100 oz (<span id="your-percent">0</span>%)</div>
 
-    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 25px 0;">
 
     <h2>Marcee</h2>
-    <button onclick="addWater('friend', 16.9)">+16.9 oz</button>
-    <button onclick="addWater('friend', 32)">+32 oz</button>
-    <br>
-    <input type="number" id="friend-input" placeholder="Custom oz">
-    <button onclick="addCustom('friend')">Add</button>
-    <p>Total: <span id="friend-total">0</span> oz</p>
-    <div class="progress-container">
-        <div id="friend-progress" class="progress-bar"></div>
+    <div class="buttons">
+        <button onclick="addWater('friend', 16.9)">+16.9 oz</button>
+        <button onclick="addWater('friend', 32)">+32 oz</button>
     </div>
-    <div class="percentage">Progress: <span id="friend-percent">0</span>%</div>
+    <input type="number" id="friend-input" placeholder="Custom">
+    <button onclick="addCustom('friend')">Add</button>
+    <div class="progress-container" id="friend-container">
+        <div id="friend-progress" class="water-fill" style="background: #29b6f6;"></div>
+    </div>
+    <div class="percentage"><span id="friend-total">0</span> / 100 oz (<span id="friend-percent">0</span>%)</div>
 
-    <div id="winner">Hydration battle begins 😤💧</div>
-    <button class="reset-btn" onclick="resetDay()">Reset Day</button>
+    <div id="winner">Let's get hydrated! 😤💧</div>
+    <button class="reset-btn" onclick="resetDay()">Reset Tracker</button>
 </div>
 
 <script type="module">
@@ -164,8 +157,7 @@ const firebaseConfig = {
   projectId: "hydro-homies-458f6",
   storageBucket: "hydro-homies-458f6.firebasestorage.app",
   messagingSenderId: "533318428966",
-  appId: "1:533318428966:web:3f9ee356e1e3c0b3c939e7",
-  measurementId: "G-FX4JNM96X6"
+  appId: "1:533318428966:web:3f9ee356e1e3c0b3c939e7"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -183,10 +175,6 @@ onValue(hydrationRef, (snapshot) => {
     if (data) {
         yourTotal = data.yourTotal || 0;
         friendTotal = data.friendTotal || 0;
-    } else {
-        yourTotal = 0;
-        friendTotal = 0;
-        saveData();
     }
     updateUI(false);
 });
@@ -200,34 +188,33 @@ function saveData() {
 }
 
 function celebrate() {
-    const duration = 3 * 1000;
+    const duration = 3000;
     const end = Date.now() + duration;
 
     (function frame() {
         confetti({
-            particleCount: 3,
+            particleCount: 5,
             angle: 60,
             spread: 55,
-            origin: { x: 0, y: 0.6 },
+            origin: { x: 0, y: 0.7 },
             colors: ['#ff0000', '#ffd700']
         });
         confetti({
-            particleCount: 3,
+            particleCount: 5,
             angle: 120,
             spread: 55,
-            origin: { x: 1, y: 0.6 },
+            origin: { x: 1, y: 0.7 },
             colors: ['#ff0000', '#ffd700']
         });
-
-        if (Date.now() < end) {
-            requestAnimationFrame(frame);
-        }
+        if (Date.now() < end) requestAnimationFrame(frame);
     }());
 }
 
 function updateUI(shouldSave = true) {
     const yourBar = document.getElementById("your-progress");
     const friendBar = document.getElementById("friend-progress");
+    const yourCont = document.getElementById("your-container");
+    const friendCont = document.getElementById("friend-container");
 
     document.getElementById("your-total").innerText = yourTotal.toFixed(1);
     document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
@@ -235,14 +222,8 @@ function updateUI(shouldSave = true) {
     let yourPercent = (yourTotal / goal) * 100;
     let friendPercent = (friendTotal / goal) * 100;
 
-    if (yourPercent >= 100 && !kFinished) {
-        celebrate();
-        kFinished = true;
-    }
-    if (friendPercent >= 100 && !mFinished) {
-        celebrate();
-        mFinished = true;
-    }
+    if (yourPercent >= 100 && !kFinished) { celebrate(); kFinished = true; }
+    if (friendPercent >= 100 && !mFinished) { celebrate(); mFinished = true; }
 
     yourBar.style.width = Math.min(yourPercent, 100) + "%";
     friendBar.style.width = Math.min(friendPercent, 100) + "%";
@@ -250,18 +231,18 @@ function updateUI(shouldSave = true) {
     document.getElementById("your-percent").innerText = Math.floor(yourPercent);
     document.getElementById("friend-percent").innerText = Math.floor(friendPercent);
 
+    // Physical Slosh Effect
+    if (shouldSave) {
+        yourCont.classList.add("slosh-shake");
+        friendCont.classList.add("slosh-shake");
+        setTimeout(() => {
+            yourCont.classList.remove("slosh-shake");
+            friendCont.classList.remove("slosh-shake");
+        }, 500);
+        saveData();
+    }
+
     updateWinner();
-
-    // Trigger splash and slosh effects
-    yourBar.classList.add("splash", "sloshing");
-    friendBar.classList.add("splash", "sloshing");
-    
-    setTimeout(() => {
-        yourBar.classList.remove("splash", "sloshing");
-        friendBar.classList.remove("splash", "sloshing");
-    }, 800);
-
-    if (shouldSave) saveData();
 }
 
 window.addWater = function(person, amount) {
@@ -282,15 +263,14 @@ window.addCustom = function(person) {
 };
 
 function updateWinner() {
-    let text = "";
-    if (yourTotal > friendTotal) text = "🏆 Kartikey is winning!";
-    else if (friendTotal > yourTotal) text = "🏆 Marcee is winning!";
-    else text = "It's tied! Stay hydrated 😤💧";
-    document.getElementById("winner").innerText = text;
+    let winDiv = document.getElementById("winner");
+    if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is winning!";
+    else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is winning!";
+    else winDiv.innerText = "It's a tie! Drink up! 😤💧";
 }
 
 window.resetDay = function() {
-    if(confirm("Are you sure you want to reset the day?")) {
+    if(confirm("Reset all water for today?")) {
         yourTotal = 0;
         friendTotal = 0;
         kFinished = false;
