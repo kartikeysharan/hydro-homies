@@ -110,7 +110,7 @@
     <button onclick="addCustom('friend')">Add</button>
     <p>Total: <span id="friend-total">0</span> oz</p>
     <div class="progress-container">
-        <div id="friend-progress" class="progress-bar"></div>
+        <div id="friend-progress" class="progress-bar Red"></div>
     </div>
     <div class="percentage">Progress: <span id="friend-percent">0</span>%</div>
 
@@ -135,14 +135,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const hydrationRef = ref(db, "hydration");
-const goal = 100; // Updated goal
+const goal = 100;
 
 let yourTotal = 0;
 let friendTotal = 0;
 let kFinished = false;
 let mFinished = false;
 
-// Live-sync listener
 onValue(hydrationRef, (snapshot) => {
     const data = snapshot.val();
     if (data) {
@@ -164,13 +163,33 @@ function saveData() {
     });
 }
 
+// RED AND YELLOW SIDE CANNONS
 function celebrate() {
-    confetti({
-        particleCount: 150,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#4dd0e1', '#00796b', '#ffffff']
-    });
+    const duration = 3 * 1000;
+    const end = Date.now() + duration;
+
+    (function frame() {
+        // Left Side
+        confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.6 },
+            colors: ['#ff0000', '#ffd700'] // Red and Yellow
+        });
+        // Right Side
+        confetti({
+            particleCount: 3,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.6 },
+            colors: ['#ff0000', '#ffd700'] // Red and Yellow
+        });
+
+        if (Date.now() < end) {
+            requestAnimationFrame(frame);
+        }
+    }());
 }
 
 function updateUI(shouldSave = true) {
@@ -183,7 +202,6 @@ function updateUI(shouldSave = true) {
     let yourPercent = (yourTotal / goal) * 100;
     let friendPercent = (friendTotal / goal) * 100;
 
-    // Check for goal completion to trigger confetti
     if (yourPercent >= 100 && !kFinished) {
         celebrate();
         kFinished = true;
@@ -201,7 +219,6 @@ function updateUI(shouldSave = true) {
 
     updateWinner();
 
-    // Splash animation
     yourBar.classList.add("splash");
     friendBar.classList.add("splash");
     setTimeout(() => {
