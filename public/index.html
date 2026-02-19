@@ -82,7 +82,7 @@
 <body>
 <div class="container">
     <h1>Hydro Homies ⛲</h1>
-    <p><strong>Daily Goal: 120 oz</strong></p>
+    <p><strong>Daily Goal: 100 oz</strong></p>
 
     <h2>You</h2>
     <button onclick="addWater('you', 16)">+16 oz</button>
@@ -130,7 +130,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const hydrationRef = ref(db, "hydration");
-const goal = 120;
+const goal = 100;
 
 let yourTotal = 0;
 let friendTotal = 0;
