@@ -11,98 +11,87 @@
             --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        body {
+        html, body {
+            height: 100%;
             margin: 0;
-            min-height: 100vh;
+            padding: 0;
+            background: #e0f7fa;
+            /* Prevents bounce/scroll issues */
+            overscroll-behavior: none; 
+        }
+
+        body {
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Better for tall iPhone screens */
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #e0f7fa;
-            /* Prevents annoying "bounce" on iOS */
-            overflow: hidden; 
+            font-family: -apple-system, system-ui, sans-serif;
             touch-action: manipulation;
         }
 
         .container {
             text-align: center;
             background: #ffffff;
-            /* Responsive height for tall screens */
             width: 100%;
-            height: 100vh; 
-            max-width: 430px; /* iPhone 17 Pro Max width approx */
-            padding: calc(var(--safe-top) + 20px) 20px calc(var(--safe-bottom) + 20px) 20px;
+            max-width: 430px;
+            /* Changed from 100vh to allow natural scrolling if needed */
+            min-height: 100%; 
+            padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 20px) 20px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
         }
 
-        .scroll-content {
-            overflow-y: auto;
+        .content-wrap {
             flex-grow: 1;
-            padding-bottom: 20px;
         }
 
-        h1 { color: #00796b; margin-top: 0; font-weight: 800; font-size: 1.5rem; }
-        .goal-text { font-size: 1rem; color: #00796b; margin-bottom: 10px; opacity: 0.7; }
+        h1 { color: #00796b; margin: 10px 0 5px 0; font-size: 1.4rem; }
+        .goal-text { font-size: 0.9rem; color: #00796b; margin-bottom: 15px; opacity: 0.7; }
 
         .player-header {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
-            margin-top: 25px;
+            gap: 8px;
+            margin-top: 20px;
         }
 
-        h2 { color: #004d40; margin: 0; font-size: 1.6rem; font-weight: 700; }
+        h2 { color: #004d40; margin: 0; font-size: 1.5rem; font-weight: 700; }
+        .crown { font-size: 1.2rem; display: none; }
+        .streak-badge { font-size: 0.8rem; background: #fff3e0; color: #ef6c00; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
 
-        .crown { font-size: 1.3rem; display: none; filter: drop-shadow(0 0 5px gold); }
-
-        .streak-badge {
-            font-size: 0.8rem;
-            background: #fff3e0;
-            color: #ef6c00;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        /* --- IPHONE OPTIMIZED BUTTONS --- */
-        .btn-group { margin: 15px 0; display: flex; justify-content: center; gap: 8px; }
+        .btn-group { margin: 12px 0; display: flex; justify-content: center; gap: 8px; }
         
         button.oz-btn {
             flex: 1;
-            max-width: 100px;
-            padding: 15px 5px; /* Taller touch target */
+            padding: 12px 0;
             border: none;
-            border-radius: 15px;
-            cursor: pointer;
+            border-radius: 12px;
             background: #26a69a;
             color: white;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1rem;
             box-shadow: 0 4px 0 #00796b;
             -webkit-tap-highlight-color: transparent;
         }
 
         button.oz-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #00796b; }
 
+        /* CRITICAL FIX: 16px prevents iOS auto-zoom */
         input {
             width: 70px;
-            height: 44px; /* iOS standard height */
+            height: 40px;
             border: 2px solid #e0f2f1;
-            border-radius: 12px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 16px; 
             text-align: center;
+            -webkit-appearance: none;
         }
 
         button.add-btn {
-            height: 44px;
-            padding: 0 20px;
+            height: 40px;
+            padding: 0 15px;
             background: #00796b;
-            border-radius: 12px;
+            border-radius: 10px;
             color: white;
             border: none;
             font-weight: bold;
@@ -110,62 +99,56 @@
 
         .progress-container {
             background: #f1f1f1;
-            border-radius: 12px;
-            height: 22px; 
+            border-radius: 10px;
+            height: 18px; 
             width: 100%;
-            margin: 15px 0 8px 0;
+            margin: 15px 0 5px 0;
             overflow: hidden;
-            position: relative;
         }
 
         .progress-bar {
             height: 100%;
             width: 0%;
             background: linear-gradient(90deg, #4fc3f7, #00796b);
-            transition: width 1s cubic-bezier(0.1, 0.5, 0.2, 1);
+            transition: width 1s ease;
         }
+
+        .percentage { font-size: 0.8rem; font-weight: bold; color: #546e7a; }
+        .cheer-box { min-height: 20px; font-size: 0.85rem; color: #78909c; margin-top: 4px; }
 
         .goal-badge {
             display: inline-block;
-            margin-top: 10px;
-            padding: 8px 15px;
+            margin-top: 8px;
+            padding: 6px 12px;
             background: rgba(0, 151, 167, 0.1);
             border: 1px solid #0097a7;
             color: #006064;
             border-radius: 50px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 800;
-            animation: pulse 2s infinite;
         }
 
         #winner-container {
-            padding: 20px 0;
+            padding-top: 15px;
+            margin-top: 15px;
             border-top: 1px solid #f1f1f1;
-            background: white;
         }
 
-        #winner { font-weight: 800; color: #004d40; font-size: 1.1rem; }
+        #winner { font-weight: 800; color: #004d40; font-size: 1rem; margin-bottom: 10px; }
 
-        .reset-area { display: flex; justify-content: center; gap: 30px; padding-bottom: 10px; }
-        .reset-btn { 
-            background: none; 
-            border: none; 
-            color: #b0bec5; 
-            font-size: 0.7rem; 
-            text-decoration: underline; 
-            padding: 10px;
-        }
+        .reset-area { display: flex; justify-content: center; gap: 20px; }
+        .reset-btn { background: none; border: none; color: #b0bec5; font-size: 0.7rem; text-decoration: underline; padding: 5px; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="scroll-content">
+    <div class="content-wrap">
         <h1>Hydro Homies ⛲</h1>
         <p class="goal-text">Daily Target: 100 oz</p>
 
         <div class="player-header">
             <span id="k-crown" class="crown">👑</span>
-            <h2 id="name-you">Kartikey</h2>
+            <h2>Kartikey</h2>
             <div class="streak-badge">🔥 <span id="k-streak">0</span></div>
         </div>
         <div class="btn-group">
@@ -179,11 +162,11 @@
         <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
         <div id="your-cheer" class="cheer-box">Ready, King?</div>
 
-        <hr style="border: 0; border-top: 1px solid #f1f1f1; margin: 25px 0;">
+        <hr style="border: 0; border-top: 1px solid #f5f5f5; margin: 20px 0;">
 
         <div class="player-header">
             <span id="m-crown" class="crown">👑</span>
-            <h2 id="name-friend">Marcee</h2>
+            <h2>Marcee</h2>
             <div class="streak-badge">🔥 <span id="m-streak">0</span></div>
         </div>
         <div class="btn-group">
@@ -243,7 +226,6 @@ onValue(hydrationRef, (snapshot) => {
         
         const today = new Date().toLocaleDateString();
         if (lastResetDate && lastResetDate !== today) handleMidnightReset();
-        else if (!lastResetDate) set(hydrationRef, { ...data, lastResetDate: today });
     }
     updateUI(null);
 });
@@ -256,10 +238,6 @@ function handleMidnightReset() {
         mStreak: friendTotal >= goal ? mStreak + 1 : 0,
         lastResetDate: today, lastUpdated: serverTimestamp()
     });
-}
-
-function celebrate() {
-    confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
 }
 
 function updateUI(entryFrom) {
@@ -275,22 +253,18 @@ function updateUI(entryFrom) {
     let kPct = (yourTotal / goal) * 100, mPct = (friendTotal / goal) * 100;
     const kCheer = document.getElementById("your-cheer"), mCheer = document.getElementById("friend-cheer");
 
-    if (kPct >= 100) {
-        kCheer.innerHTML = `<div class="goal-badge">✨ KING KARTIKEY IS HYDRATED ✨</div>`;
-        if (entryFrom === 'you') celebrate();
-    } else if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 5)];
+    if (kPct >= 100) kCheer.innerHTML = `<div class="goal-badge">✨ KING KARTIKEY IS HYDRATED ✨</div>`;
+    else if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 5)];
 
-    if (mPct >= 100) {
-        mCheer.innerHTML = `<div class="goal-badge">✨ QUEEN MARCEE IS HYDRATED ✨</div>`;
-        if (entryFrom === 'friend') celebrate();
-    } else if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 5)];
+    if (mPct >= 100) mCheer.innerHTML = `<div class="goal-badge">✨ QUEEN MARCEE IS HYDRATED ✨</div>`;
+    else if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 5)];
 
     document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%";
     document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
 
     let winDiv = document.getElementById("winner");
-    if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is winning";
-    else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is winning";
+    if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is leading";
+    else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is leading";
     else winDiv.innerText = "WAR TIED 😤";
 
     if (entryFrom && entryFrom !== 'null') {
@@ -298,6 +272,7 @@ function updateUI(entryFrom) {
             yourTotal: parseFloat(yourTotal.toFixed(1)), friendTotal: parseFloat(friendTotal.toFixed(1)),
             kStreak, mStreak, lastResetDate: lastResetDate || new Date().toLocaleDateString(), lastUpdated: serverTimestamp()
         });
+        if (entryFrom !== 'reset' && (kPct >= 100 || mPct >= 100)) confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
     }
 }
 
@@ -311,8 +286,8 @@ window.addCustom = function(p) {
         updateUI(p); 
     }
 };
-window.resetDay = function() { if(confirm("Wipe today's water?")) { yourTotal = 0; friendTotal = 0; updateUI('reset'); } };
-window.resetStreaks = function() { if(confirm("Reset ALL streaks?")) { kStreak = 0; mStreak = 0; updateUI('reset'); } };
+window.resetDay = function() { if(confirm("Reset water?")) { yourTotal = 0; friendTotal = 0; updateUI('reset'); } };
+window.resetStreaks = function() { if(confirm("Reset streaks?")) { kStreak = 0; mStreak = 0; updateUI('reset'); } };
 </script>
 </body>
 </html>
