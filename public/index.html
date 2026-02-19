@@ -153,20 +153,40 @@ let friendGoalReached = false;
 let declaredWinner = false;
 let lastDeclaredDate = null;
 
-/* -------- LIVE SYNC -------- */
+/* -------- LIVE SYNC WITH SAFE DEFAULTS -------- */
 onValue(hydrationRef, (snapshot) => {
     const data = snapshot.val();
+
     if (data) {
+        // Load existing totals and streaks
         yourTotal = data.yourTotal || 0;
         friendTotal = data.friendTotal || 0;
         yourStreak = data.yourStreak || 0;
         friendStreak = data.friendStreak || 0;
         lastDeclaredDate = data.lastDeclaredDate || null;
     } else {
-        saveData();
+        // Node doesn't exist — initialize defaults safely
+        yourTotal = 0;
+        friendTotal = 0;
+        yourStreak = 0;
+        friendStreak = 0;
+        lastDeclaredDate = null;
+
+        // Write defaults to Firebase
+        set(hydrationRef, {
+            yourTotal,
+            friendTotal,
+            yourStreak,
+            friendStreak,
+            lastDeclaredDate,
+            lastUpdated: serverTimestamp()
+        });
     }
 
-    checkRetroactiveDeclaration(); // NEW: retroactive winner
+    // Retroactive winner check
+    checkRetroactiveDeclaration();
+
+    // Update UI
     updateUI(false);
 });
 
@@ -176,14 +196,13 @@ function saveData() {
         friendTotal,
         yourStreak,
         friendStreak,
-        lastUpdated: serverTimestamp(),
-        lastDeclaredDate: lastDeclaredDate || null
+        lastDeclaredDate,
+        lastUpdated: serverTimestamp()
     });
 }
 
 /* -------- UI UPDATE -------- */
 function updateUI(shouldSave = true) {
-
     document.getElementById("your-total").innerText = yourTotal.toFixed(1);
     document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
 
@@ -224,7 +243,6 @@ window.addCustom = function(person) {
 
 /* -------- WINNER + CELEBRATION -------- */
 function updateWinner() {
-
     if (yourTotal >= goal && !yourGoalReached) {
         celebrate("🎉 YOU hit 100 oz! Keep going! 💧🔥");
         yourGoalReached = true;
@@ -246,7 +264,6 @@ function updateWinner() {
 }
 
 function celebrate(message) {
-
     document.getElementById("winner").innerText = message;
 
     let duration = 3000;
@@ -293,7 +310,6 @@ function checkRetroactiveDeclaration() {
 }
 
 function declareWinner(isRetroactive = false) {
-
     declaredWinner = true;
 
     let banner = document.getElementById("victory-banner");
