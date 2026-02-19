@@ -31,9 +31,10 @@
         .player-header {
             display: flex;
             justify-content: center;
-            align-items: baseline;
-            gap: 15px;
+            align-items: center;
+            gap: 12px;
             margin-top: 30px;
+            position: relative;
         }
 
         h2 { 
@@ -41,6 +42,19 @@
             margin: 0;
             font-size: 1.8rem; 
             font-weight: 700;
+        }
+
+        /* --- THE CROWN STYLE --- */
+        .crown {
+            font-size: 1.4rem;
+            display: none; /* Hidden by default */
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.6));
+            animation: float 2s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .streak-badge {
@@ -181,6 +195,7 @@
     <p class="goal-text">Daily Target: 100 oz</p>
 
     <div class="player-header">
+        <span id="k-crown" class="crown">👑</span>
         <h2 id="name-you">Kartikey</h2>
         <div class="streak-badge">🔥 <span id="k-streak">0</span></div>
     </div>
@@ -193,11 +208,12 @@
     <button class="add-btn" onclick="addCustom('you')">Add</button>
     <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
     <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
-    <div id="your-cheer" class="cheer-box">Ready?</div>
+    <div id="your-cheer" class="cheer-box">Ready, King?</div>
 
     <hr style="border: 0; border-top: 1px solid #f1f1f1; margin: 30px 0;">
 
     <div class="player-header">
+        <span id="m-crown" class="crown">👑</span>
         <h2 id="name-friend">Marcee</h2>
         <div class="streak-badge">🔥 <span id="m-streak">0</span></div>
     </div>
@@ -209,15 +225,15 @@
     <button class="add-btn" onclick="addCustom('friend')">Add</button>
     <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
     <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
-    <div id="friend-cheer" class="cheer-box">Take that first sip!</div>
+    <div id="friend-cheer" class="cheer-box">Go Queen!</div>
 
     <div id="winner-container">
-        <div id="winner">HYDRATION WAR IN PROGRESS... 😤</div>
+        <div id="winner">WAR IN PROGRESS... 😤</div>
     </div>
     
     <div class="reset-area">
         <button class="reset-btn" onclick="resetDay()">Reset Water</button>
-        <button class="reset-btn" onclick="resetStreaks()" style="color: #ffab91;">Reset Streak</button>
+        <button class="reset-btn" onclick="resetStreaks()" style="color: #ffab91;">Reset Streaks</button>
     </div>
 </div>
 
@@ -249,8 +265,8 @@ function getMessages(user) {
     const title = user === "Kartikey" ? "King" : "Queen";
     const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
     return [
-        `Keep going, water warrior! 🌊`,
-        `Your skin is already glowing! ✨`,
+        `Keep going, ${title}! 🌊`,
+        `Glowing! ✨`,
         `Legendary gulp. 👑`,
         `${opp} is shaking! 👟`,
         `Hydration ${title} behavior.`
@@ -307,6 +323,22 @@ function updateUI(entryFrom) {
     document.getElementById("k-streak").innerText = kStreak;
     document.getElementById("m-streak").innerText = mStreak;
 
+    // --- CROWN LOGIC ---
+    const kCrown = document.getElementById("k-crown");
+    const mCrown = document.getElementById("m-crown");
+    
+    kCrown.style.display = "none";
+    mCrown.style.display = "none";
+
+    if (kStreak > 0 || mStreak > 0) {
+        if (kStreak > mStreak) kCrown.style.display = "inline-block";
+        else if (mStreak > kStreak) mCrown.style.display = "inline-block";
+        else { // It's a tie
+            kCrown.style.display = "inline-block";
+            mCrown.style.display = "inline-block";
+        }
+    }
+
     let kPct = (yourTotal / goal) * 100;
     let mPct = (friendTotal / goal) * 100;
 
@@ -314,7 +346,7 @@ function updateUI(entryFrom) {
     const mCheer = document.getElementById("friend-cheer");
 
     if (kPct >= 100) {
-        kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
+        kCheer.innerHTML = `<div class="goal-badge">✨ KING KARTIKEY IS HYDRATED ✨</div>`;
         if (entryFrom === 'you') celebrate();
     } else if (entryFrom === 'you') {
         const msgs = getMessages("Kartikey");
@@ -322,7 +354,7 @@ function updateUI(entryFrom) {
     }
 
     if (mPct >= 100) {
-        mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
+        mCheer.innerHTML = `<div class="goal-badge">✨ QUEEN MARCEE IS HYDRATED ✨</div>`;
         if (entryFrom === 'friend') celebrate();
     } else if (entryFrom === 'friend') {
         const msgs = getMessages("Marcee");
@@ -350,7 +382,7 @@ function updateWinner() {
     let winDiv = document.getElementById("winner");
     if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is winning";
     else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is winning";
-    else winDiv.innerText = "HYDRATION WAR TIED 😤";
+    else winDiv.innerText = "WAR TIED 😤";
 }
 
 window.addWater = function(p, a) {
