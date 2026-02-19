@@ -208,7 +208,7 @@
     <button class="add-btn" onclick="addCustom('you')">Add</button>
     <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
     <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
-    <div id="your-cheer" class="cheer-box">Ready, King?</div>
+    <div id="your-cheer" class="cheer-box">Morning! Drink up!</div>
 
     <hr style="border: 0; border-top: 1px solid #f1f1f1; margin: 30px 0;">
 
@@ -225,10 +225,10 @@
     <button class="add-btn" onclick="addCustom('friend')">Add</button>
     <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
     <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
-    <div id="friend-cheer" class="cheer-box">Go Queen!</div>
+    <div id="friend-cheer" class="cheer-box">Ready for your first sip?</div>
 
     <div id="winner-container">
-        <div id="winner">WAR IN PROGRESS... 😤</div>
+        <div id="winner">HYDRATION WAR IN PROGRESS... 😤</div>
     </div>
     
     <div class="reset-area">
@@ -265,11 +265,12 @@ function getMessages(user) {
     const title = user === "Kartikey" ? "King" : "Queen";
     const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
     return [
-        `Keep going, ${title}! 🌊`,
-        `Glowing! ✨`,
+        `Keep going, water warrior! 🌊`,
+        `Your skin is already glowin! ✨`,
         `Legendary gulp. 👑`,
         `${opp} is shaking! 👟`,
-        `Hydration ${title} behavior.`
+        `Hydration ${title} behavior.`,
+        'One sip closer to becoming a fish 🐟'
     ];
 }
 
@@ -346,7 +347,7 @@ function updateUI(entryFrom) {
     const mCheer = document.getElementById("friend-cheer");
 
     if (kPct >= 100) {
-        kCheer.innerHTML = `<div class="goal-badge">✨ KING KARTIKEY IS HYDRATED ✨</div>`;
+        kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
         if (entryFrom === 'you') celebrate();
     } else if (entryFrom === 'you') {
         const msgs = getMessages("Kartikey");
@@ -354,7 +355,7 @@ function updateUI(entryFrom) {
     }
 
     if (mPct >= 100) {
-        mCheer.innerHTML = `<div class="goal-badge">✨ QUEEN MARCEE IS HYDRATED ✨</div>`;
+        mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
         if (entryFrom === 'friend') celebrate();
     } else if (entryFrom === 'friend') {
         const msgs = getMessages("Marcee");
@@ -382,7 +383,7 @@ function updateWinner() {
     let winDiv = document.getElementById("winner");
     if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is winning";
     else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is winning";
-    else winDiv.innerText = "WAR TIED 😤";
+    else winDiv.innerText = "HYDRATION WAR TIED 😤";
 }
 
 window.addWater = function(p, a) {
