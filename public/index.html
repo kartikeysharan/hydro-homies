@@ -51,28 +51,64 @@
         }
 
         .progress-container {
-            background: #ddd;
+            background: #eee;
             border-radius: 20px;
-            height: 25px;
+            height: 35px; /* Slightly taller for better effect */
             width: 100%;
             margin: 10px 0;
             overflow: hidden;
             position: relative;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .progress-bar {
             height: 100%;
             width: 0%;
-            background: linear-gradient(45deg, #4dd0e1, #00796b);
-            transition: width 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Water Gradient with "Wave" pattern */
+            background: linear-gradient(
+                90deg, 
+                #4dd0e1 0%, 
+                #00bcd4 50%, 
+                #0097a7 100%
+            );
+            background-size: 200% 100%;
+            transition: width 0.8s cubic-bezier(0.1, 0.5, 0.2, 1);
+            position: relative;
         }
 
-        .splash { animation: splashAnim 0.6s ease; }
+        /* The Splashing Water Effect */
+        .progress-bar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.3) 20%, transparent 20%);
+            background-size: 15px 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
 
-        @keyframes splashAnim {
-            0% { transform: scaleY(1); }
-            50% { transform: scaleY(1.3); }
-            100% { transform: scaleY(1); }
+        .splash::after {
+            opacity: 1;
+            animation: bubbles 0.6s infinite;
+        }
+
+        @keyframes bubbles {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 -30px; }
+        }
+
+        /* Sloshing animation when value changes */
+        @keyframes slosh {
+            0% { transform: scaleX(1); }
+            50% { transform: scaleX(1.02); }
+            100% { transform: scaleX(1); }
+        }
+
+        .sloshing {
+            animation: slosh 0.4s ease-in-out;
         }
 
         .percentage { font-size: 0.9rem; margin-top: -5px; color: #555; }
@@ -110,7 +146,7 @@
     <button onclick="addCustom('friend')">Add</button>
     <p>Total: <span id="friend-total">0</span> oz</p>
     <div class="progress-container">
-        <div id="friend-progress" class="progress-bar Red"></div>
+        <div id="friend-progress" class="progress-bar"></div>
     </div>
     <div class="percentage">Progress: <span id="friend-percent">0</span>%</div>
 
@@ -163,27 +199,24 @@ function saveData() {
     });
 }
 
-// RED AND YELLOW SIDE CANNONS
 function celebrate() {
     const duration = 3 * 1000;
     const end = Date.now() + duration;
 
     (function frame() {
-        // Left Side
         confetti({
             particleCount: 3,
             angle: 60,
             spread: 55,
             origin: { x: 0, y: 0.6 },
-            colors: ['#ff0000', '#ffd700'] // Red and Yellow
+            colors: ['#ff0000', '#ffd700']
         });
-        // Right Side
         confetti({
             particleCount: 3,
             angle: 120,
             spread: 55,
             origin: { x: 1, y: 0.6 },
-            colors: ['#ff0000', '#ffd700'] // Red and Yellow
+            colors: ['#ff0000', '#ffd700']
         });
 
         if (Date.now() < end) {
@@ -219,12 +252,14 @@ function updateUI(shouldSave = true) {
 
     updateWinner();
 
-    yourBar.classList.add("splash");
-    friendBar.classList.add("splash");
+    // Trigger splash and slosh effects
+    yourBar.classList.add("splash", "sloshing");
+    friendBar.classList.add("splash", "sloshing");
+    
     setTimeout(() => {
-        yourBar.classList.remove("splash");
-        friendBar.classList.remove("splash");
-    }, 600);
+        yourBar.classList.remove("splash", "sloshing");
+        friendBar.classList.remove("splash", "sloshing");
+    }, 800);
 
     if (shouldSave) saveData();
 }
