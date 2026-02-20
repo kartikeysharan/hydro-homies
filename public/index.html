@@ -62,6 +62,7 @@ margin-bottom: 10px;
 
 h2 { color: #004d40; margin: 0; font-size: 1.8rem; font-weight: 700; }
 
+/* Removed background and padding */
 .crown-badge {
 font-size: 1.1rem;
 background: none;
@@ -72,6 +73,7 @@ align-items: center;
 gap: 4px;
 }
 
+/* Removed background and padding */
 .streak-badge { 
 font-size: 1.1rem; 
 background: none;
@@ -181,7 +183,7 @@ text-overflow: ellipsis;
 <div class="player-section">
 <div class="player-header">
 <div class="crown-badge">👑<span id="k-crowns">0</span></div>
-<h2 id="k-name">Kartikey</h2>
+<h2>Kartikey</h2>
 <div class="streak-badge">🔥<span id="k-streak">0</span></div>
 </div>
 <div class="btn-group">
@@ -203,7 +205,7 @@ text-overflow: ellipsis;
 <div class="player-section">
 <div class="player-header">
 <div class="crown-badge">👑<span id="m-crowns">0</span></div>
-<h2 id="m-name">Marcee</h2>
+<h2>Marcee</h2>
 <div class="streak-badge">🔥<span id="m-streak">0</span></div>
 </div>
 <div class="btn-group">
@@ -247,122 +249,124 @@ const db = getDatabase(app);
 const hydrationRef = ref(db, "hydration");
 const goal = 100;
 
-// URL Recognition Logic
-const urlParams = new URLSearchParams(window.location.search);
-const currentUser = urlParams.get('user'); // 'k' or 'm'
-
 let yourTotal = 0, friendTotal = 0, kStreak = 0, mStreak = 0, kCrowns = 0, mCrowns = 0, lastResetDate = "";
-let kAlreadyCelebrated = false, mAlreadyCelebrated = false;
+let kAlreadyCelebrated = false;
+let mAlreadyCelebrated = false;
 
-function getMessages(targetPlayer) {
-    const isMe = (targetPlayer === "Kartikey" && currentUser === 'k') || (targetPlayer === "Marcee" && currentUser === 'm');
-    const opp = targetPlayer === "Kartikey" ? "Marcee" : "Kartikey";
-    
-    if (isMe) {
-        return [`You're doing great, superstar! ✨`, `Drink up! Your skin will thank you. 💧`, `Legendary sip. 👑`, `Keep pushing, ${opp} is watching! 👟`, `Hydration Royalty behavior.`, `Stay fresh! 🐟`, `You're crushing this! 🌊`];
-    } else {
-        return [`${targetPlayer} is catching up! 🏃`, `${targetPlayer} is looking hydrated. ✨`, `Check out ${targetPlayer}'s progress!`, `Is ${targetPlayer} going to win today? ⚔️`, `Hydration war in progress!`, `${targetPlayer} just took a gulp.`, `Don't let ${targetPlayer} beat you! 🌊`];
-    }
+function getMessages(user) {
+const title = user === "Kartikey" ? "King" : "Queen";
+const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
+return [`Keep going, water warrior! 🌊`, `Your skin is already glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`, `One step away from being a fish 🐟`, `Remind someone you love to drink water 😊`];
 }
 
 onValue(hydrationRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
-        yourTotal = data.yourTotal || 0;
-        friendTotal = data.friendTotal || 0;
-        kStreak = data.kStreak || 0;
-        mStreak = data.mStreak || 0;
-        kCrowns = data.kCrowns || 0;
-        mCrowns = data.mCrowns || 0;
-        lastResetDate = data.lastResetDate || "";
-        const today = new Date().toLocaleDateString();
-        if (lastResetDate && lastResetDate !== today) handleMidnightReset();
-    }
-    updateUI(null);
+const data = snapshot.val();
+if (data) {
+yourTotal = data.yourTotal || 0;
+friendTotal = data.friendTotal || 0;
+kStreak = data.kStreak || 0;
+mStreak = data.mStreak || 0;
+kCrowns = data.kCrowns || 0;
+mCrowns = data.mCrowns || 0;
+lastResetDate = data.lastResetDate || "";
+const today = new Date().toLocaleDateString();
+if (lastResetDate && lastResetDate !== today) handleMidnightReset();
+}
+updateUI(null);
 });
 
 function handleMidnightReset() {
-    const today = new Date().toLocaleDateString();
-    let newKCrowns = kCrowns, newMCrowns = mCrowns;
-    if (yourTotal > friendTotal) newKCrowns++;
-    else if (friendTotal > yourTotal) newMCrowns++;
+const today = new Date().toLocaleDateString();
+let newKCrowns = kCrowns;
+let newMCrowns = mCrowns;
 
-    set(hydrationRef, {
-        yourTotal: 0, friendTotal: 0,
-        kStreak: yourTotal >= goal ? kStreak + 1 : 0,
-        mStreak: friendTotal >= goal ? mStreak + 1 : 0,
-        kCrowns: newKCrowns, mCrowns: newMCrowns,
-        lastResetDate: today, lastUpdated: serverTimestamp()
-    });
+if (yourTotal > friendTotal) {
+    newKCrowns++;
+} else if (friendTotal > yourTotal) {
+    newMCrowns++;
+}
+
+set(hydrationRef, {
+yourTotal: 0, friendTotal: 0,
+kStreak: yourTotal >= goal ? kStreak + 1 : 0,
+mStreak: friendTotal >= goal ? mStreak + 1 : 0,
+kCrowns: newKCrowns,
+mCrowns: newMCrowns,
+lastResetDate: today, lastUpdated: serverTimestamp()
+});
 }
 
 function updateUI(entryFrom) {
-    document.getElementById("your-total").innerText = yourTotal.toFixed(1);
-    document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
-    document.getElementById("k-streak").innerText = kStreak;
-    document.getElementById("m-streak").innerText = mStreak;
-    document.getElementById("k-crowns").innerText = kCrowns;
-    document.getElementById("m-crowns").innerText = mCrowns;
+document.getElementById("your-total").innerText = yourTotal.toFixed(1);
+document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
+document.getElementById("k-streak").innerText = kStreak;
+document.getElementById("m-streak").innerText = mStreak;
+document.getElementById("k-crowns").innerText = kCrowns;
+document.getElementById("m-crowns").innerText = mCrowns;
 
-    // Personalized Name Titles
-    if (currentUser === 'k') {
-        document.getElementById("k-name").innerText = "You (Kartikey)";
-        document.getElementById("m-name").innerText = "Marcee";
-    } else if (currentUser === 'm') {
-        document.getElementById("k-name").innerText = "Kartikey";
-        document.getElementById("m-name").innerText = "You (Marcee)";
-    }
+let kPct = (yourTotal / goal) * 100, mPct = (friendTotal / goal) * 100;
+const kCheer = document.getElementById("your-cheer"), mCheer = document.getElementById("friend-cheer");
 
-    let kPct = (yourTotal / goal) * 100, mPct = (friendTotal / goal) * 100;
-    const kCheer = document.getElementById("your-cheer"), mCheer = document.getElementById("friend-cheer");
+if (entryFrom === 'reset') {
+kCheer.innerText = "Thirsty? Let's get drinking!";
+mCheer.innerText = "Good Morning! Ready for your first sip?";
+kAlreadyCelebrated = false;
+mAlreadyCelebrated = false;
+} else {
+if (kPct >= 100) {
+kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
+if (entryFrom === 'you' && !kAlreadyCelebrated) {
+confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+kAlreadyCelebrated = true;
+}
+} else {
+kAlreadyCelebrated = false;
+if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 7)];
+}
 
-    if (entryFrom === 'reset') {
-        kCheer.innerText = "Thirsty? Let's get drinking!";
-        mCheer.innerText = "Good Morning! Ready for your first sip?";
-    } else {
-        if (kPct >= 100) {
-            kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
-            if (entryFrom === 'you' && !kAlreadyCelebrated) { confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } }); kAlreadyCelebrated = true; }
-        } else {
-            kAlreadyCelebrated = false;
-            if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 7)];
-        }
+if (mPct >= 100) {
+mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
+if (entryFrom === 'friend' && !mAlreadyCelebrated) {
+confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+mAlreadyCelebrated = true;
+}
+} else {
+mAlreadyCelebrated = false;
+if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 7)];
+}
+}
 
-        if (mPct >= 100) {
-            mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
-            if (entryFrom === 'friend' && !mAlreadyCelebrated) { confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } }); mAlreadyCelebrated = true; }
-        } else {
-            mAlreadyCelebrated = false;
-            if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 7)];
-        }
-    }
+document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%";
+document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
 
-    document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%";
-    document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
+let winDiv = document.getElementById("winner");
+if (yourTotal === 0 && friendTotal === 0) {
+winDiv.innerText = "The Hydration War Begins ⚔️";
+} else if (yourTotal > friendTotal) {
+winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
+} else if (friendTotal > yourTotal) {
+winDiv.innerText = "🏆 MARCEE IS LEADING!";
+} else {
+winDiv.innerText = "HYDRATION WAR TIED 😤";
+}
 
-    let winDiv = document.getElementById("winner");
-    if (yourTotal === 0 && friendTotal === 0) winDiv.innerText = "The Hydration War Begins ⚔️";
-    else if (yourTotal > friendTotal) winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
-    else if (friendTotal > yourTotal) winDiv.innerText = "🏆 MARCEE IS LEADING!";
-    else winDiv.innerText = "HYDRATION WAR TIED 😤";
-
-    if (entryFrom && entryFrom !== 'null') {
-        set(hydrationRef, {
-            yourTotal: parseFloat(yourTotal.toFixed(1)), friendTotal: parseFloat(friendTotal.toFixed(1)),
-            kStreak, mStreak, kCrowns, mCrowns, lastResetDate: lastResetDate || new Date().toLocaleDateString(), lastUpdated: serverTimestamp()
-        });
-    }
+if (entryFrom && entryFrom !== 'null') {
+set(hydrationRef, {
+yourTotal: parseFloat(yourTotal.toFixed(1)), friendTotal: parseFloat(friendTotal.toFixed(1)),
+kStreak, mStreak, kCrowns, mCrowns, lastResetDate: lastResetDate || new Date().toLocaleDateString(), lastUpdated: serverTimestamp()
+});
+}
 }
 
 window.addWater = function(p, a) { p === "you" ? yourTotal += a : friendTotal += a; updateUI(p); };
 window.addCustom = function(p) {
-    const id = p === "you" ? "your-input" : "friend-input";
-    let val = parseFloat(document.getElementById(id).value);
-    if (!isNaN(val) && val > 0) {
-        p === "you" ? yourTotal += val : friendTotal += val;
-        document.getElementById(id).value = "";
-        updateUI(p);
-    }
+const id = p === "you" ? "your-input" : "friend-input";
+let val = parseFloat(document.getElementById(id).value);
+if (!isNaN(val) && val > 0) {
+p === "you" ? yourTotal += val : friendTotal += val;
+document.getElementById(id).value = "";
+updateUI(p);
+}
 };
 window.resetDay = function() { if(confirm("Reset water?")) { yourTotal = 0; friendTotal = 0; updateUI('reset'); } };
 window.resetStreaks = function() { if(confirm("Reset streaks?")) { kStreak = 0; mStreak = 0; kCrowns = 0; mCrowns = 0; updateUI('reset'); } };
