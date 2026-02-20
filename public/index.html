@@ -16,7 +16,6 @@
             margin: 0;
             padding: 0;
             background: #e0f7fa;
-            /* Prevents bounce/scroll issues */
             overscroll-behavior: none; 
         }
 
@@ -43,7 +42,6 @@
             flex-grow: 1;
         }
 
-        /* Made slightly bigger */
         h1 { color: #00796b; margin: 15px 0 10px 0; font-size: 1.8rem; }
 
         .player-header {
@@ -132,7 +130,6 @@
             border-top: 1px solid #f1f1f1;
         }
 
-        /* Made slightly bigger */
         #winner { font-weight: 800; color: #004d40; font-size: 1.2rem; margin-bottom: 15px; }
 
         .reset-area { display: flex; justify-content: center; gap: 20px; }
@@ -142,7 +139,7 @@
 <body>
 <div class="container">
     <div class="content-wrap">
-        <h1>Hydro Homies 🌊</h1>
+        <h1>Hydro Homies ⛲</h1>
 
         <div class="player-header">
             <span id="k-crown" class="crown">👑</span>
@@ -286,9 +283,16 @@ function updateUI(entryFrom) {
     document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
 
     let winDiv = document.getElementById("winner");
-    if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is leading 🏆";
-    else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is leading 🏆";
-    else winDiv.innerText = "HYDRATION WAR TIED 😤";
+    // New Logic: Check if totals are 0
+    if (yourTotal === 0 && friendTotal === 0) {
+        winDiv.innerText = "HYDRATION WAR IN PROGRESS... 😤";
+    } else if (yourTotal > friendTotal) {
+        winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
+    } else if (friendTotal > yourTotal) {
+        winDiv.innerText = "🏆 MARCEE IS LEADING!";
+    } else {
+        winDiv.innerText = "HYDRATION WAR TIED 😤";
+    }
 
     if (entryFrom && entryFrom !== 'null') {
         set(hydrationRef, {
