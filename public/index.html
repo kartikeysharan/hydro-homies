@@ -160,7 +160,7 @@
         <button class="add-btn" onclick="addCustom('you')">Add</button>
         <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
         <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
-        <div id="your-cheer" class="cheer-box">Ready, King?</div>
+        <div id="your-cheer" class="cheer-box">Lets get drinking!</div>
 
         <hr style="border: 0; border-top: 1px solid #f5f5f5; margin: 20px 0;">
 
@@ -177,11 +177,11 @@
         <button class="add-btn" onclick="addCustom('friend')">Add</button>
         <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
         <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
-        <div id="friend-cheer" class="cheer-box">Go Queen!</div>
+        <div id="friend-cheer" class="cheer-box">Good morning! Ready for your first sip?</div>
     </div>
 
     <div id="winner-container">
-        <div id="winner">WAR IN PROGRESS... 😤</div>
+        <div id="winner">HYDRATION WAR IN PROGRESS... 😤</div>
         <div class="reset-area">
             <button class="reset-btn" onclick="resetDay()">Reset Water</button>
             <button class="reset-btn" onclick="resetStreaks()" style="color: #ffab91;">Reset Streaks</button>
@@ -208,11 +208,14 @@ const hydrationRef = ref(db, "hydration");
 const goal = 100;
 
 let yourTotal = 0, friendTotal = 0, kStreak = 0, mStreak = 0, lastResetDate = "";
+// Track local state to prevent repeat confetti
+let kAlreadyCelebrated = false;
+let mAlreadyCelebrated = false;
 
 function getMessages(user) {
     const title = user === "Kartikey" ? "King" : "Queen";
     const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
-    return [`Keep going, ${title}! 🌊`, `Glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`];
+    return [`Keep going, water warrior! 🌊`, `Your skin is already glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`, `One step away from being a fish 🐟`, `Remind someone you care about to drink water!`];
 }
 
 onValue(hydrationRef, (snapshot) => {
@@ -253,26 +256,53 @@ function updateUI(entryFrom) {
     let kPct = (yourTotal / goal) * 100, mPct = (friendTotal / goal) * 100;
     const kCheer = document.getElementById("your-cheer"), mCheer = document.getElementById("friend-cheer");
 
-    if (kPct >= 100) kCheer.innerHTML = `<div class="goal-badge">✨ KING KARTIKEY IS HYDRATED ✨</div>`;
-    else if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 5)];
+    // Fix 1: Handle Resetting the "Hydrated" text and confetti trackers
+    if (entryFrom === 'reset') {
+        kCheer.innerText = "Thirsty? Lets get drinking!";
+        mCheer.innerText = "Good morning! Ready for your first sip?";
+        kAlreadyCelebrated = false;
+        mAlreadyCelebrated = false;
+    } else {
+        // Kartikey Goal Display
+        if (kPct >= 100) {
+            kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
+            // Fix 2: Only confetti if this specific user just hit the goal
+            if (entryFrom === 'you' && !kAlreadyCelebrated) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                kAlreadyCelebrated = true;
+            }
+        } else {
+            kAlreadyCelebrated = false; // Reset if they drop below goal (manual edit)
+            if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 5)];
+        }
 
-    if (mPct >= 100) mCheer.innerHTML = `<div class="goal-badge">✨ QUEEN MARCEE IS HYDRATED ✨</div>`;
-    else if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 5)];
+        // Marcee Goal Display
+        if (mPct >= 100) {
+            mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
+            // Fix 2: Only confetti if this specific user just hit the goal
+            if (entryFrom === 'friend' && !mAlreadyCelebrated) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                mAlreadyCelebrated = true;
+            }
+        } else {
+            mAlreadyCelebrated = false; // Reset if they drop below goal
+            if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 5)];
+        }
+    }
 
     document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%";
     document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
 
     let winDiv = document.getElementById("winner");
-    if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is leading";
-    else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is leading";
-    else winDiv.innerText = "WAR TIED 😤";
+    if (yourTotal > friendTotal) winDiv.innerText = "🏆 Kartikey is leading 🏆";
+    else if (friendTotal > yourTotal) winDiv.innerText = "🏆 Marcee is leading 🏆";
+    else winDiv.innerText = "HYDRATION WAR TIED 😤";
 
     if (entryFrom && entryFrom !== 'null') {
         set(hydrationRef, {
             yourTotal: parseFloat(yourTotal.toFixed(1)), friendTotal: parseFloat(friendTotal.toFixed(1)),
             kStreak, mStreak, lastResetDate: lastResetDate || new Date().toLocaleDateString(), lastUpdated: serverTimestamp()
         });
-        if (entryFrom !== 'reset' && (kPct >= 100 || mPct >= 100)) confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
     }
 }
 
