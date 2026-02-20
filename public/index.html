@@ -206,7 +206,7 @@
     </div>
 
     <div id="winner-container">
-        <div id="winner">The Hydration War Begins!</div>
+        <div id="winner">The Hydration War Begins ⚔️</div>
         <div class="reset-area">
             <button class="reset-btn" onclick="resetDay()">Reset Water</button>
             <button class="reset-btn" onclick="resetStreaks()" style="color: #ffab91;">Reset Streaks</button>
@@ -313,7 +313,7 @@ function updateUI(entryFrom) {
 
     let winDiv = document.getElementById("winner");
     if (yourTotal === 0 && friendTotal === 0) {
-        winDiv.innerText = "The Hydration War Begins!";
+        winDiv.innerText = "The Hydration War Begins ⚔️";
     } else if (yourTotal > friendTotal) {
         winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
     } else if (friendTotal > yourTotal) {
