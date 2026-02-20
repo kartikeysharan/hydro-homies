@@ -1,350 +1,563 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+
     <title>Hydro Homies 🌊</title>
+
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
+
         :root {
+
             --safe-top: env(safe-area-inset-top);
+
             --safe-bottom: env(safe-area-inset-bottom);
+
         }
+
+
 
         html, body {
+
             height: 100%;
+
             margin: 0;
+
             padding: 0;
+
             background: #e0f7fa;
+
             overscroll-behavior: none; 
+
         }
+
+
 
         body {
+
             display: flex;
+
             justify-content: center;
+
             font-family: -apple-system, system-ui, sans-serif;
+
             touch-action: manipulation;
+
         }
+
+
 
         .container {
+
             text-align: center;
+
             background: #ffffff;
+
             width: 100%;
+
             max-width: 430px;
+
             min-height: 100%; 
+
             padding: calc(var(--safe-top) + 15px) 25px calc(var(--safe-bottom) + 25px) 25px;
+
             box-sizing: border-box;
+
             display: flex;
+
             flex-direction: column;
+
         }
+
+
+
+        /* Reduced margin to pull everything up */
 
         .header-section {
-            margin-bottom: 5px; /* Minimal gap after title */
+
+            margin-bottom: 15px; 
+
         }
+
+
 
         .content-wrap {
+
             flex-grow: 1;
+
             display: flex;
+
             flex-direction: column;
-            justify-content: space-around; /* Distributes Marcee further down */
+
+            justify-content: flex-start; /* Aligns items to the top instead of spreading */
+
+            gap: 20px; /* Precise control over space between players */
+
         }
 
-        /* Specific tweak to pull Kartikey's section higher */
-        .player-section:first-of-type {
-            margin-top: -10px; 
-        }
+
 
         h1 { color: #00796b; margin: 5px 0; font-size: 2.2rem; font-weight: 800; }
 
+
+
         .player-header {
+
             display: flex;
+
             justify-content: center;
+
             align-items: center;
+
             gap: 10px;
+
             margin-bottom: 10px;
+
         }
+
+
 
         h2 { color: #004d40; margin: 0; font-size: 1.8rem; font-weight: 700; }
+
         .crown { font-size: 1.5rem; display: none; }
+
         .streak-badge { font-size: 0.9rem; background: #fff3e0; color: #ef6c00; padding: 4px 10px; border-radius: 12px; font-weight: bold; }
 
+
+
         .btn-group { margin: 10px 0; display: flex; justify-content: center; gap: 8px; }
+
         
+
         button.oz-btn {
+
             flex: 1;
+
             padding: 12px 0;
+
             border: none;
+
             border-radius: 12px;
+
             background: #26a69a;
+
             color: white;
+
             font-weight: bold;
+
             font-size: 1rem;
+
             box-shadow: 0 4px 0 #00796b;
+
             -webkit-tap-highlight-color: transparent;
+
         }
+
+
 
         button.oz-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #00796b; }
 
+
+
         input {
+
             width: 80px;
+
             height: 45px;
+
             border: 2px solid #e0f2f1;
+
             border-radius: 12px;
+
             font-size: 16px; 
+
             text-align: center;
+
             -webkit-appearance: none;
+
         }
+
+
 
         button.add-btn {
+
             height: 45px;
+
             padding: 0 20px;
+
             background: #00796b;
+
             border-radius: 12px;
+
             color: white;
+
             border: none;
+
             font-weight: bold;
+
             font-size: 1rem;
+
         }
+
+
 
         .progress-container {
+
             background: #f1f1f1;
+
             border-radius: 12px;
+
             height: 22px; 
+
             width: 100%;
+
             margin: 15px 0 6px 0;
+
             overflow: hidden;
+
         }
+
+
 
         .progress-bar {
+
             height: 100%;
+
             width: 0%;
+
             background: linear-gradient(90deg, #4fc3f7, #00796b);
+
             transition: width 1s ease;
+
         }
+
+
 
         .percentage { font-size: 1rem; font-weight: 700; color: #455a64; margin-bottom: 3px; }
+
         
+
         .cheer-box { min-height: 25px; font-size: 0.95rem; color: #607d8b; margin-top: 3px; font-style: italic; }
 
+
+
         .goal-badge {
+
             display: inline-block;
+
             margin-top: 8px;
+
             padding: 8px 16px;
+
             background: rgba(0, 151, 167, 0.1);
+
             border: 2px solid #0097a7;
+
             color: #006064;
+
             border-radius: 50px;
+
             font-size: 0.9rem;
+
             font-weight: 800;
+
         }
+
+
 
         #winner-container {
+
             padding-top: 15px;
-            margin-top: auto;
+
+            margin-top: auto; /* Keeps the winner message at the bottom */
+
             border-top: 2px solid #f1f1f1;
+
         }
+
+
 
         #winner { 
+
             font-weight: 900; 
+
             color: #004d40; 
+
             font-size: 1.35rem; 
+
             margin-bottom: 12px; 
+
             letter-spacing: -0.2px;
+
             white-space: nowrap; 
+
             overflow: hidden;
+
             text-overflow: ellipsis;
+
         }
 
+
+
         .reset-area { display: flex; justify-content: center; gap: 30px; }
+
         .reset-btn { background: none; border: none; color: #b0bec5; font-size: 0.85rem; text-decoration: underline; padding: 10px; font-weight: 500; }
+
     </style>
+
 </head>
+
 <body>
+
 <div class="container">
+
     <div class="header-section">
+
         <h1>Hydro Homies ⛲</h1>
+
     </div>
 
+
+
     <div class="content-wrap">
+
         <div class="player-section">
+
             <div class="player-header">
+
                 <span id="k-crown" class="crown">👑</span>
+
                 <h2>Kartikey</h2>
+
                 <div class="streak-badge">🔥 <span id="k-streak">0</span></div>
+
             </div>
+
             <div class="btn-group">
+
                 <button class="oz-btn" onclick="addWater('you', 16)">16</button>
+
                 <button class="oz-btn" onclick="addWater('you', 26)">26</button>
+
                 <button class="oz-btn" onclick="addWater('you', 32)">32</button>
+
             </div>
+
             <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+
                 <input type="number" id="your-input" placeholder="oz" inputmode="decimal">
+
                 <button class="add-btn" onclick="addCustom('you')">Add</button>
+
             </div>
+
             <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
+
             <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
+
             <div id="your-cheer" class="cheer-box">Lets get drinking!</div>
+
         </div>
+
+
 
         <hr style="border: 0; border-top: 1px solid #f5f5f5; width: 80%; margin: 5px auto;">
 
+
+
         <div class="player-section">
+
             <div class="player-header">
+
                 <span id="m-crown" class="crown">👑</span>
+
                 <h2>Marcee</h2>
+
                 <div class="streak-badge">🔥 <span id="m-streak">0</span></div>
+
             </div>
+
             <div class="btn-group">
+
                 <button class="oz-btn" onclick="addWater('friend', 16.9)">16.9</button>
+
                 <button class="oz-btn" onclick="addWater('friend', 32)">32</button>
+
             </div>
+
             <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+
                 <input type="number" id="friend-input" placeholder="oz" inputmode="decimal">
+
                 <button class="add-btn" onclick="addCustom('friend')">Add</button>
+
             </div>
+
             <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
+
             <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
+
             <div id="friend-cheer" class="cheer-box">Ready for your first sip?</div>
+
         </div>
+
     </div>
+
+
 
     <div id="winner-container">
+
         <div id="winner">HYDRATION WAR IN PROGRESS... 😤</div>
+
         <div class="reset-area">
+
             <button class="reset-btn" onclick="resetDay()">Reset Water</button>
+
             <button class="reset-btn" onclick="resetStreaks()" style="color: #ffab91;">Reset Streaks</button>
+
         </div>
+
     </div>
+
 </div>
 
+
+
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+
 import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
+
+
 const firebaseConfig = {
+
     apiKey: "AIzaSyCfMLAnZKb7cAiEwliEnCtrpwIoKOjr1kg",
+
     authDomain: "hydro-homies-458f6.firebaseapp.com",
+
     projectId: "hydro-homies-458f6",
+
     storageBucket: "hydro-homies-458f6.firebasestorage.app",
+
     messagingSenderId: "533318428966",
+
     appId: "1:533318428966:web:3f9ee356e1e3c0b3c939e7"
+
 };
+
+
 
 const app = initializeApp(firebaseConfig);
+
 const db = getDatabase(app);
+
 const hydrationRef = ref(db, "hydration");
+
 const goal = 100;
 
+
+
 let yourTotal = 0, friendTotal = 0, kStreak = 0, mStreak = 0, lastResetDate = "";
+
 let kAlreadyCelebrated = false;
+
 let mAlreadyCelebrated = false;
 
+
+
 function getMessages(user) {
+
     const title = user === "Kartikey" ? "King" : "Queen";
+
     const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
+
     return [`Keep going, water warrior! 🌊`, `Your skin is glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`, `One step away from being a fish 🐟`, `Drink up, ${title}! 💧`];
+
 }
+
+
 
 onValue(hydrationRef, (snapshot) => {
+
     const data = snapshot.val();
+
     if (data) {
+
         yourTotal = data.yourTotal || 0;
+
         friendTotal = data.friendTotal || 0;
+
         kStreak = data.kStreak || 0;
+
         mStreak = data.mStreak || 0;
+
         lastResetDate = data.lastResetDate || "";
+
         const today = new Date().toLocaleDateString();
+
         if (lastResetDate && lastResetDate !== today) handleMidnightReset();
+
     }
+
     updateUI(null);
+
 });
 
+
+
 function handleMidnightReset() {
+
     const today = new Date().toLocaleDateString();
+
     set(hydrationRef, {
+
         yourTotal: 0, friendTotal: 0,
+
         kStreak: yourTotal >= goal ? kStreak + 1 : 0,
+
         mStreak: friendTotal >= goal ? mStreak + 1 : 0,
+
         lastResetDate: today, lastUpdated: serverTimestamp()
+
     });
+
 }
+
+
 
 function updateUI(entryFrom) {
+
     document.getElementById("your-total").innerText = yourTotal.toFixed(1);
+
     document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
+
     document.getElementById("k-streak").innerText = kStreak;
+
     document.getElementById("m-streak").innerText = mStreak;
 
+
+
     const kCrown = document.getElementById("k-crown"), mCrown = document.getElementById("m-crown");
+
     kCrown.style.display = (kStreak > 0 && kStreak >= mStreak) ? "inline-block" : "none";
+
     mCrown.style.display = (mStreak > 0 && mStreak >= kStreak) ? "inline-block" : "none";
 
+
+
     let kPct = (yourTotal / goal) * 100, mPct = (friendTotal / goal) * 100;
+
     const kCheer = document.getElementById("your-cheer"), mCheer = document.getElementById("friend-cheer");
 
+
+
     if (entryFrom === 'reset') {
-        kCheer.innerText = "Thirsty? Lets get drinking!";
-        mCheer.innerText = "Ready for your first sip?";
-        kAlreadyCelebrated = false;
-        mAlreadyCelebrated = false;
-    } else {
-        if (kPct >= 100) {
-            kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
-            if (entryFrom === 'you' && !kAlreadyCelebrated) {
-                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-                kAlreadyCelebrated = true;
-            }
-        } else {
-            kAlreadyCelebrated = false; 
-            if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 7)];
-        }
-
-        if (mPct >= 100) {
-            mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
-            if (entryFrom === 'friend' && !mAlreadyCelebrated) {
-                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-                mAlreadyCelebrated = true;
-            }
-        } else {
-            mAlreadyCelebrated = false; 
-            if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 7)];
-        }
-    }
-
-    document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%";
-    document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
-
-    let winDiv = document.getElementById("winner");
-    if (yourTotal === 0 && friendTotal === 0) {
-        winDiv.innerText = "HYDRATION WAR IN PROGRESS... 😤";
-    } else if (yourTotal > friendTotal) {
-        winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
-    } else if (friendTotal > yourTotal) {
-        winDiv.innerText = "🏆 MARCEE IS LEADING!";
-    } else {
-        winDiv.innerText = "HYDRATION WAR TIED 😤";
-    }
-
-    if (entryFrom && entryFrom !== 'null') {
-        set(hydrationRef, {
-            yourTotal: parseFloat(yourTotal.toFixed(1)), friendTotal: parseFloat(friendTotal.toFixed(1)),
-            kStreak, mStreak, lastResetDate: lastResetDate || new Date().toLocaleDateString(), lastUpdated: serverTimestamp()
-        });
-    }
-}
-
-window.addWater = function(p, a) { p === "you" ? yourTotal += a : friendTotal += a; updateUI(p); };
-window.addCustom = function(p) {
-    const id = p === "you" ? "your-input" : "friend-input";
-    let val = parseFloat(document.getElementById(id).value);
-    if (!isNaN(val) && val > 0) { 
-        p === "you" ? yourTotal += val : friendTotal += val; 
-        document.getElementById(id).value = ""; 
-        updateUI(p); 
-    }
-};
-window.resetDay = function() { if(confirm("Reset water?")) { yourTotal = 0; friendTotal = 0; updateUI('reset'); } };
-window.resetStreaks = function() { if(confirm("Reset streaks?")) { kStreak = 0; mStreak = 0; updateUI('reset'); } };
-</script>
-</body>
-</html>
