@@ -54,14 +54,34 @@ h1 { color: #00796b; margin: 5px 0; font-size: 2.2rem; font-weight: 800; }
 
 .player-header {
 display: flex;
-justify-content: space-between;
+justify-content: center;
 align-items: center;
+gap: 10px; /* Original spacing */
 margin-bottom: 10px;
 }
 
-h2 { color: #004d40; margin: 0; font-size: 1.8rem; font-weight: 700; flex-grow: 1; text-align: center; }
-.crown-stat { font-size: 1.2rem; min-width: 50px; text-align: left; }
-.streak-badge { font-size: 0.9rem; background: #fff3e0; color: #ef6c00; padding: 4px 10px; border-radius: 12px; font-weight: bold; min-width: 40px; text-align: right; }
+h2 { color: #004d40; margin: 0; font-size: 1.8rem; font-weight: 700; }
+
+.crown-badge {
+font-size: 0.9rem;
+background: #fff9c4;
+color: #fbc02d;
+padding: 4px 10px;
+border-radius: 12px;
+font-weight: bold;
+display: flex;
+align-items: center;
+gap: 4px;
+}
+
+.streak-badge { 
+font-size: 0.9rem; 
+background: #fff3e0; 
+color: #ef6c00; 
+padding: 4px 10px; 
+border-radius: 12px; 
+font-weight: bold; 
+}
 
 .btn-group { margin: 10px 0; display: flex; justify-content: center; gap: 8px; }
 button.oz-btn {
@@ -161,7 +181,7 @@ text-overflow: ellipsis;
 <div class="content-wrap">
 <div class="player-section">
 <div class="player-header">
-<div class="crown-stat">👑 <span id="k-crowns">0</span></div>
+<div class="crown-badge">👑 <span id="k-crowns">0</span></div>
 <h2>Kartikey</h2>
 <div class="streak-badge">🔥 <span id="k-streak">0</span></div>
 </div>
@@ -183,7 +203,7 @@ text-overflow: ellipsis;
 
 <div class="player-section">
 <div class="player-header">
-<div class="crown-stat">👑 <span id="m-crowns">0</span></div>
+<div class="crown-badge">👑 <span id="m-crowns">0</span></div>
 <h2>Marcee</h2>
 <div class="streak-badge">🔥 <span id="m-streak">0</span></div>
 </div>
