@@ -340,14 +340,17 @@ document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%"
 document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
 
 let winDiv = document.getElementById("winner");
-if (yourTotal === 0 && friendTotal === 0) {
-winDiv.innerText = "The Hydration War Begins ⚔️";
-} else if (yourTotal > friendTotal) {
-winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
-} else if (friendTotal > yourTotal) {
-winDiv.innerText = "🏆 MARCEE IS LEADING!";
+const kVal = parseFloat(yourTotal.toFixed(1));
+const mVal = parseFloat(friendTotal.toFixed(1));
+
+if (kVal === 0 && mVal === 0) {
+    winDiv.innerText = "The Hydration War Begins ⚔️";
+} else if (kVal > mVal) {
+    winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
+} else if (mVal > kVal) {
+    winDiv.innerText = "🏆 MARCEE IS LEADING!";
 } else {
-winDiv.innerText = "HYDRATION WAR TIED 😤";
+    winDiv.innerText = "HYDRATION WAR TIED 😤";
 }
 
 if (entryFrom && entryFrom !== 'null') {
