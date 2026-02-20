@@ -38,30 +38,32 @@
             flex-direction: column;
         }
 
-        .header-section { margin-bottom: 15px; }
-        h1 { color: #00796b; margin: 5px 0; font-size: 2.2rem; font-weight: 800; }
+        /* Reduced margin to pull everything up */
+        .header-section {
+            margin-bottom: 15px; 
+        }
 
         .content-wrap {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            gap: 20px;
+            justify-content: flex-start; /* Aligns items to the top instead of spreading */
+            gap: 20px; /* Precise control over space between players */
         }
+
+        h1 { color: #00796b; margin: 5px 0; font-size: 2.2rem; font-weight: 800; }
 
         .player-header {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
             margin-bottom: 10px;
         }
 
         h2 { color: #004d40; margin: 0; font-size: 1.8rem; font-weight: 700; }
-        
-        .badge-row { display: flex; gap: 8px; justify-content: center; }
+        .crown { font-size: 1.5rem; display: none; }
         .streak-badge { font-size: 0.9rem; background: #fff3e0; color: #ef6c00; padding: 4px 10px; border-radius: 12px; font-weight: bold; }
-        .win-badge { font-size: 0.9rem; background: #e1f5fe; color: #0277bd; padding: 4px 10px; border-radius: 12px; font-weight: bold; }
 
         .btn-group { margin: 10px 0; display: flex; justify-content: center; gap: 8px; }
         
@@ -118,6 +120,7 @@
         }
 
         .percentage { font-size: 1rem; font-weight: 700; color: #455a64; margin-bottom: 3px; }
+        
         .cheer-box { min-height: 25px; font-size: 0.95rem; color: #607d8b; margin-top: 3px; font-style: italic; }
 
         .goal-badge {
@@ -134,61 +137,26 @@
 
         #winner-container {
             padding-top: 15px;
-            margin-top: auto;
+            margin-top: auto; /* Keeps the winner message at the bottom */
             border-top: 2px solid #f1f1f1;
         }
 
-        #winner { font-weight: 900; color: #004d40; font-size: 1.3rem; margin-bottom: 12px; }
+        #winner { 
+            font-weight: 900; 
+            color: #004d40; 
+            font-size: 1.35rem; 
+            margin-bottom: 12px; 
+            letter-spacing: -0.2px;
+            white-space: nowrap; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-        .reset-area { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .reset-area { display: flex; justify-content: center; gap: 30px; }
         .reset-btn { background: none; border: none; color: #b0bec5; font-size: 0.85rem; text-decoration: underline; padding: 10px; font-weight: 500; }
-
-        /* Modal / History Table Styles */
-        #history-modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 20px;
-            padding: 20px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9rem; }
-        th { background: #e0f2f1; padding: 10px; color: #00796b; }
-        td { padding: 10px; border-bottom: 1px solid #f1f1f1; text-align: center; }
-        .win-name { font-weight: bold; color: #00796b; }
     </style>
 </head>
 <body>
-
-<div id="history-modal" onclick="closeHistory()">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <h3 style="color: #00796b; margin-top: 0;">Weekly Battle Log</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>K</th>
-                    <th>M</th>
-                    <th>🏆</th>
-                </tr>
-            </thead>
-            <tbody id="history-body">
-                </tbody>
-        </table>
-        <button class="add-btn" style="width: 100%; margin-top: 20px;" onclick="closeHistory()">Close</button>
-    </div>
-</div>
-
 <div class="container">
     <div class="header-section">
         <h1>Hydro Homies ⛲</h1>
@@ -197,11 +165,9 @@
     <div class="content-wrap">
         <div class="player-section">
             <div class="player-header">
+                <span id="k-crown" class="crown">👑</span>
                 <h2>Kartikey</h2>
-                <div class="badge-row">
-                    <div class="streak-badge">🔥 <span id="k-streak">0</span></div>
-                    <div class="win-badge">👑 <span id="k-wins">0</span></div>
-                </div>
+                <div class="streak-badge">🔥 <span id="k-streak">0</span></div>
             </div>
             <div class="btn-group">
                 <button class="oz-btn" onclick="addWater('you', 16)">16</button>
@@ -214,18 +180,16 @@
             </div>
             <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
             <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
-            <div id="your-cheer" class="cheer-box">Thirsty?</div>
+            <div id="your-cheer" class="cheer-box">Thirsty? Let's get drinking!</div>
         </div>
 
         <hr style="border: 0; border-top: 1px solid #f5f5f5; width: 80%; margin: 5px auto;">
 
         <div class="player-section">
             <div class="player-header">
+                <span id="m-crown" class="crown">👑</span>
                 <h2>Marcee</h2>
-                <div class="badge-row">
-                    <div class="streak-badge">🔥 <span id="m-streak">0</span></div>
-                    <div class="win-badge">👑 <span id="m-wins">0</span></div>
-                </div>
+                <div class="streak-badge">🔥 <span id="m-streak">0</span></div>
             </div>
             <div class="btn-group">
                 <button class="oz-btn" onclick="addWater('friend', 16.9)">16.9</button>
@@ -237,14 +201,13 @@
             </div>
             <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
             <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
-            <div id="friend-cheer" class="cheer-box">Ready?</div>
+            <div id="friend-cheer" class="cheer-box">Good Morning! Ready for your first sip?</div>
         </div>
     </div>
 
     <div id="winner-container">
         <div id="winner">The Hydration War Begins ⚔️</div>
         <div class="reset-area">
-            <button class="reset-btn" onclick="showHistory()">View History</button>
             <button class="reset-btn" onclick="resetDay()">Reset Water</button>
             <button class="reset-btn" onclick="resetStreaks()" style="color: #ffab91;">Reset Streaks</button>
         </div>
@@ -253,7 +216,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, serverTimestamp, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyCfMLAnZKb7cAiEwliEnCtrpwIoKOjr1kg",
@@ -267,47 +230,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const hydrationRef = ref(db, "hydration");
-const historyRef = ref(db, "history");
+const goal = 100;
 
 let yourTotal = 0, friendTotal = 0, kStreak = 0, mStreak = 0, lastResetDate = "";
+let kAlreadyCelebrated = false;
+let mAlreadyCelebrated = false;
 
-async function updateWeeklyWins() {
-    const snapshot = await get(historyRef);
-    if (snapshot.exists()) {
-        const history = snapshot.val();
-        const dates = Object.keys(history).sort().slice(-7);
-        let kWins = 0, mWins = 0;
-        dates.forEach(date => {
-            if (history[date].winner === "Kartikey") kWins++;
-            if (history[date].winner === "Marcee") mWins++;
-        });
-        document.getElementById("k-wins").innerText = kWins;
-        document.getElementById("m-wins").innerText = mWins;
-    }
+function getMessages(user) {
+    const title = user === "Kartikey" ? "King" : "Queen";
+    const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
+    return [`Keep going, water warrior! 🌊`, `Your skin is already glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`, `One step away from being a fish 🐟`, `Remind someone you love to drink water 😊`];
 }
-
-window.showHistory = async function() {
-    const snapshot = await get(historyRef);
-    const tbody = document.getElementById("history-body");
-    tbody.innerHTML = "";
-    if (snapshot.exists()) {
-        const history = snapshot.val();
-        const dates = Object.keys(history).sort().reverse().slice(0, 7);
-        dates.forEach(date => {
-            const data = history[date];
-            const row = `<tr>
-                <td>${date.split('-').slice(1).join('/')}</td>
-                <td>${data.kartikeyScore}</td>
-                <td>${data.marceeScore}</td>
-                <td class="win-name">${data.winner === 'Tie' ? '=' : data.winner.charAt(0)}</td>
-            </tr>`;
-            tbody.innerHTML += row;
-        });
-    }
-    document.getElementById("history-modal").style.display = "flex";
-}
-
-window.closeHistory = function() { document.getElementById("history-modal").style.display = "none"; }
 
 onValue(hydrationRef, (snapshot) => {
     const data = snapshot.val();
@@ -317,33 +250,19 @@ onValue(hydrationRef, (snapshot) => {
         kStreak = data.kStreak || 0;
         mStreak = data.mStreak || 0;
         lastResetDate = data.lastResetDate || "";
-        const today = new Date().toLocaleDateString('en-CA');
-        if (lastResetDate && lastResetDate !== today) {
-            handleMidnightReset(lastResetDate, yourTotal, friendTotal);
-        }
+        const today = new Date().toLocaleDateString();
+        if (lastResetDate && lastResetDate !== today) handleMidnightReset();
     }
     updateUI(null);
-    updateWeeklyWins();
 });
 
-function handleMidnightReset(oldDate, kFinal, mFinal) {
-    let dayWinner = "Tie";
-    if (kFinal > mFinal) dayWinner = "Kartikey";
-    else if (mFinal > kFinal) dayWinner = "Marcee";
-
-    set(ref(db, `history/${oldDate}`), {
-        kartikeyScore: kFinal,
-        marceeScore: mFinal,
-        winner: dayWinner,
-        timestamp: serverTimestamp()
-    });
-
+function handleMidnightReset() {
+    const today = new Date().toLocaleDateString();
     set(hydrationRef, {
         yourTotal: 0, friendTotal: 0,
-        kStreak: kFinal >= 100 ? kStreak + 1 : 0,
-        mStreak: mFinal >= 100 ? mStreak + 1 : 0,
-        lastResetDate: new Date().toLocaleDateString('en-CA'), 
-        lastUpdated: serverTimestamp()
+        kStreak: yourTotal >= goal ? kStreak + 1 : 0,
+        mStreak: friendTotal >= goal ? mStreak + 1 : 0,
+        lastResetDate: today, lastUpdated: serverTimestamp()
     });
 }
 
@@ -353,18 +272,60 @@ function updateUI(entryFrom) {
     document.getElementById("k-streak").innerText = kStreak;
     document.getElementById("m-streak").innerText = mStreak;
 
-    document.getElementById("your-progress").style.width = Math.min((yourTotal/100)*100, 100) + "%";
-    document.getElementById("friend-progress").style.width = Math.min((friendTotal/100)*100, 100) + "%";
+    const kCrown = document.getElementById("k-crown"), mCrown = document.getElementById("m-crown");
+    kCrown.style.display = (kStreak > 0 && kStreak >= mStreak) ? "inline-block" : "none";
+    mCrown.style.display = (mStreak > 0 && mStreak >= kStreak) ? "inline-block" : "none";
+
+    let kPct = (yourTotal / goal) * 100, mPct = (friendTotal / goal) * 100;
+    const kCheer = document.getElementById("your-cheer"), mCheer = document.getElementById("friend-cheer");
+
+    if (entryFrom === 'reset') {
+        kCheer.innerText = "Thirsty? Let's get drinking!";
+        mCheer.innerText = "Good Morning! Ready for your first sip?";
+        kAlreadyCelebrated = false;
+        mAlreadyCelebrated = false;
+    } else {
+        if (kPct >= 100) {
+            kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
+            if (entryFrom === 'you' && !kAlreadyCelebrated) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                kAlreadyCelebrated = true;
+            }
+        } else {
+            kAlreadyCelebrated = false; 
+            if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 7)];
+        }
+
+        if (mPct >= 100) {
+            mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
+            if (entryFrom === 'friend' && !mAlreadyCelebrated) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                mAlreadyCelebrated = true;
+            }
+        } else {
+            mAlreadyCelebrated = false; 
+            if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 7)];
+        }
+    }
+
+    document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%";
+    document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
 
     let winDiv = document.getElementById("winner");
-    if (yourTotal > friendTotal) winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
-    else if (friendTotal > yourTotal) winDiv.innerText = "🏆 MARCEE IS LEADING!";
-    else winDiv.innerText = "HYDRATION WAR TIED 😤";
+    if (yourTotal === 0 && friendTotal === 0) {
+        winDiv.innerText = "The Hydration War Begins ⚔️";
+    } else if (yourTotal > friendTotal) {
+        winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
+    } else if (friendTotal > yourTotal) {
+        winDiv.innerText = "🏆 MARCEE IS LEADING!";
+    } else {
+        winDiv.innerText = "HYDRATION WAR TIED 😤";
+    }
 
-    if (entryFrom) {
+    if (entryFrom && entryFrom !== 'null') {
         set(hydrationRef, {
             yourTotal: parseFloat(yourTotal.toFixed(1)), friendTotal: parseFloat(friendTotal.toFixed(1)),
-            kStreak, mStreak, lastResetDate: lastResetDate || new Date().toLocaleDateString('en-CA'), lastUpdated: serverTimestamp()
+            kStreak, mStreak, lastResetDate: lastResetDate || new Date().toLocaleDateString(), lastUpdated: serverTimestamp()
         });
     }
 }
@@ -373,7 +334,11 @@ window.addWater = function(p, a) { p === "you" ? yourTotal += a : friendTotal +=
 window.addCustom = function(p) {
     const id = p === "you" ? "your-input" : "friend-input";
     let val = parseFloat(document.getElementById(id).value);
-    if (!isNaN(val) && val > 0) { p === "you" ? yourTotal += val : friendTotal += val; document.getElementById(id).value = ""; updateUI(p); }
+    if (!isNaN(val) && val > 0) { 
+        p === "you" ? yourTotal += val : friendTotal += val; 
+        document.getElementById(id).value = ""; 
+        updateUI(p); 
+    }
 };
 window.resetDay = function() { if(confirm("Reset water?")) { yourTotal = 0; friendTotal = 0; updateUI('reset'); } };
 window.resetStreaks = function() { if(confirm("Reset streaks?")) { kStreak = 0; mStreak = 0; updateUI('reset'); } };
