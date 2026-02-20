@@ -38,20 +38,17 @@
             flex-direction: column;
         }
 
+        /* Reduced margin to pull everything up */
         .header-section {
-            margin-bottom: 5px; /* Minimal gap after title */
+            margin-bottom: 15px; 
         }
 
         .content-wrap {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-around; /* Distributes Marcee further down */
-        }
-
-        /* Specific tweak to pull Kartikey's section higher */
-        .player-section:first-of-type {
-            margin-top: -10px; 
+            justify-content: flex-start; /* Aligns items to the top instead of spreading */
+            gap: 20px; /* Precise control over space between players */
         }
 
         h1 { color: #00796b; margin: 5px 0; font-size: 2.2rem; font-weight: 800; }
@@ -140,7 +137,7 @@
 
         #winner-container {
             padding-top: 15px;
-            margin-top: auto;
+            margin-top: auto; /* Keeps the winner message at the bottom */
             border-top: 2px solid #f1f1f1;
         }
 
