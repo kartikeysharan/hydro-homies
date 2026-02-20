@@ -39,15 +39,19 @@
         }
 
         .header-section {
-            margin-bottom: 15px; 
+            margin-bottom: 5px; /* Minimal gap after title */
         }
 
         .content-wrap {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; 
-            gap: 20px; 
+            justify-content: space-around; /* Distributes Marcee further down */
+        }
+
+        /* Specific tweak to pull Kartikey's section higher */
+        .player-section:first-of-type {
+            margin-top: -10px; 
         }
 
         h1 { color: #00796b; margin: 5px 0; font-size: 2.2rem; font-weight: 800; }
@@ -134,10 +138,9 @@
             font-weight: 800;
         }
 
-        /* Nudged this container slightly more down */
         #winner-container {
-            padding-top: 25px; 
-            margin-top: auto; 
+            padding-top: 15px;
+            margin-top: auto;
             border-top: 2px solid #f1f1f1;
         }
 
@@ -145,20 +148,14 @@
             font-weight: 900; 
             color: #004d40; 
             font-size: 1.35rem; 
-            margin-bottom: 15px; 
+            margin-bottom: 12px; 
             letter-spacing: -0.2px;
             white-space: nowrap; 
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .reset-area { 
-            display: flex; 
-            justify-content: center; 
-            gap: 30px; 
-            margin-bottom: 10px; /* Pulls the buttons away from the very bottom edge */
-        }
-
+        .reset-area { display: flex; justify-content: center; gap: 30px; }
         .reset-btn { background: none; border: none; color: #b0bec5; font-size: 0.85rem; text-decoration: underline; padding: 10px; font-weight: 500; }
     </style>
 </head>
