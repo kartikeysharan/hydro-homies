@@ -32,32 +32,39 @@
             width: 100%;
             max-width: 430px;
             min-height: 100%; 
-            padding: calc(var(--safe-top) + 10px) 20px calc(var(--safe-bottom) + 20px) 20px;
+            padding: calc(var(--safe-top) + 20px) 25px calc(var(--safe-bottom) + 30px) 25px;
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            justify-content: space-between; /* Spreads content to fill the height */
         }
 
         .content-wrap {
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around; /* Distributes player sections evenly */
         }
 
-        h1 { color: #00796b; margin: 15px 0 10px 0; font-size: 1.8rem; }
+        /* BIGGER: Hydro Homies Title */
+        h1 { color: #00796b; margin: 0 0 10px 0; font-size: 2.2rem; font-weight: 800; }
 
         .player-header {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
-        h2 { color: #004d40; margin: 0; font-size: 1.5rem; font-weight: 700; }
-        .crown { font-size: 1.2rem; display: none; }
-        .streak-badge { font-size: 0.8rem; background: #fff3e0; color: #ef6c00; padding: 2px 8px; border-radius: 10px; font-weight: bold; }
+        /* BIGGER: Player Names */
+        h2 { color: #004d40; margin: 0; font-size: 1.8rem; font-weight: 700; }
+        .crown { font-size: 1.5rem; display: none; }
+        .streak-badge { font-size: 0.9rem; background: #fff3e0; color: #ef6c00; padding: 4px 10px; border-radius: 12px; font-weight: bold; }
 
-        .btn-group { margin: 12px 0; display: flex; justify-content: center; gap: 8px; }
+        .btn-group { margin: 15px 0; display: flex; justify-content: center; gap: 8px; }
         
+        /* Keeping Oz buttons the same size as requested */
         button.oz-btn {
             flex: 1;
             padding: 12px 0;
@@ -74,31 +81,32 @@
         button.oz-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #00796b; }
 
         input {
-            width: 70px;
-            height: 40px;
+            width: 80px;
+            height: 45px;
             border: 2px solid #e0f2f1;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px; 
             text-align: center;
             -webkit-appearance: none;
         }
 
         button.add-btn {
-            height: 40px;
-            padding: 0 15px;
+            height: 45px;
+            padding: 0 20px;
             background: #00796b;
-            border-radius: 10px;
+            border-radius: 12px;
             color: white;
             border: none;
             font-weight: bold;
+            font-size: 1rem;
         }
 
         .progress-container {
             background: #f1f1f1;
-            border-radius: 10px;
-            height: 18px; 
+            border-radius: 12px;
+            height: 22px; 
             width: 100%;
-            margin: 15px 0 5px 0;
+            margin: 20px 0 8px 0;
             overflow: hidden;
         }
 
@@ -109,70 +117,84 @@
             transition: width 1s ease;
         }
 
-        .percentage { font-size: 0.8rem; font-weight: bold; color: #546e7a; }
-        .cheer-box { min-height: 20px; font-size: 0.85rem; color: #78909c; margin-top: 4px; }
+        /* BIGGER: Progress Fraction */
+        .percentage { font-size: 1rem; font-weight: 700; color: #455a64; margin-bottom: 5px; }
+        
+        /* BIGGER: Cheer messages */
+        .cheer-box { min-height: 25px; font-size: 1rem; color: #607d8b; margin-top: 5px; font-style: italic; }
 
         .goal-badge {
             display: inline-block;
-            margin-top: 8px;
-            padding: 6px 12px;
+            margin-top: 10px;
+            padding: 8px 16px;
             background: rgba(0, 151, 167, 0.1);
-            border: 1px solid #0097a7;
+            border: 2px solid #0097a7;
             color: #006064;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.9rem;
             font-weight: 800;
         }
 
         #winner-container {
-            padding-top: 15px;
-            margin-top: 15px;
-            border-top: 1px solid #f1f1f1;
+            padding-top: 25px;
+            margin-top: 20px;
+            border-top: 2px solid #f1f1f1;
         }
 
-        #winner { font-weight: 800; color: #004d40; font-size: 1.2rem; margin-bottom: 15px; }
+        /* BIGGER: Leading message */
+        #winner { font-weight: 900; color: #004d40; font-size: 1.5rem; margin-bottom: 20px; letter-spacing: -0.5px; }
 
-        .reset-area { display: flex; justify-content: center; gap: 20px; }
-        .reset-btn { background: none; border: none; color: #b0bec5; font-size: 0.7rem; text-decoration: underline; padding: 5px; }
+        .reset-area { display: flex; justify-content: center; gap: 30px; }
+        .reset-btn { background: none; border: none; color: #b0bec5; font-size: 0.85rem; text-decoration: underline; padding: 10px; font-weight: 500; }
     </style>
 </head>
 <body>
 <div class="container">
-    <div class="content-wrap">
+    <div class="header-section">
         <h1>Hydro Homies ⛲</h1>
+    </div>
 
-        <div class="player-header">
-            <span id="k-crown" class="crown">👑</span>
-            <h2>Kartikey</h2>
-            <div class="streak-badge">🔥 <span id="k-streak">0</span></div>
+    <div class="content-wrap">
+        <div class="player-section">
+            <div class="player-header">
+                <span id="k-crown" class="crown">👑</span>
+                <h2>Kartikey</h2>
+                <div class="streak-badge">🔥 <span id="k-streak">0</span></div>
+            </div>
+            <div class="btn-group">
+                <button class="oz-btn" onclick="addWater('you', 16)">16</button>
+                <button class="oz-btn" onclick="addWater('you', 26)">26</button>
+                <button class="oz-btn" onclick="addWater('you', 32)">32</button>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+                <input type="number" id="your-input" placeholder="oz" inputmode="decimal">
+                <button class="add-btn" onclick="addCustom('you')">Add</button>
+            </div>
+            <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
+            <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
+            <div id="your-cheer" class="cheer-box">Lets get drinking!</div>
         </div>
-        <div class="btn-group">
-            <button class="oz-btn" onclick="addWater('you', 16)">16</button>
-            <button class="oz-btn" onclick="addWater('you', 26)">26</button>
-            <button class="oz-btn" onclick="addWater('you', 32)">32</button>
-        </div>
-        <input type="number" id="your-input" placeholder="oz" inputmode="decimal">
-        <button class="add-btn" onclick="addCustom('you')">Add</button>
-        <div class="progress-container"><div id="your-progress" class="progress-bar"></div></div>
-        <div class="percentage"><span id="your-total">0</span> / 100 oz</div>
-        <div id="your-cheer" class="cheer-box">Lets get drinking!</div>
 
-        <hr style="border: 0; border-top: 1px solid #f5f5f5; margin: 25px 0;">
+        <hr style="border: 0; border-top: 1px solid #f5f5f5; width: 80%; margin: 10px auto;">
 
-        <div class="player-header">
-            <span id="m-crown" class="crown">👑</span>
-            <h2>Marcee</h2>
-            <div class="streak-badge">🔥 <span id="m-streak">0</span></div>
+        <div class="player-section">
+            <div class="player-header">
+                <span id="m-crown" class="crown">👑</span>
+                <h2>Marcee</h2>
+                <div class="streak-badge">🔥 <span id="m-streak">0</span></div>
+            </div>
+            <div class="btn-group">
+                <button class="oz-btn" onclick="addWater('friend', 16.9)">16.9</button>
+                <button class="oz-btn" onclick="addWater('friend', 32)">32</button>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 10px; align-items: center;">
+                <input type="number" id="friend-input" placeholder="oz" inputmode="decimal">
+                <button class="add-btn" onclick="addCustom('friend')">Add</button>
+            </div>
+            <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
+            <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
+            <div id="friend-cheer" class="cheer-box">Ready for your first sip?</div>
         </div>
-        <div class="btn-group">
-            <button class="oz-btn" onclick="addWater('friend', 16.9)">16.9</button>
-            <button class="oz-btn" onclick="addWater('friend', 32)">32</button>
-        </div>
-        <input type="number" id="friend-input" placeholder="oz" inputmode="decimal">
-        <button class="add-btn" onclick="addCustom('friend')">Add</button>
-        <div class="progress-container"><div id="friend-progress" class="progress-bar"></div></div>
-        <div class="percentage"><span id="friend-total">0</span> / 100 oz</div>
-        <div id="friend-cheer" class="cheer-box">Good morning! Ready for your first sip?</div>
     </div>
 
     <div id="winner-container">
@@ -209,7 +231,7 @@ let mAlreadyCelebrated = false;
 function getMessages(user) {
     const title = user === "Kartikey" ? "King" : "Queen";
     const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
-    return [`Keep going, water warrior! 🌊`, `Your skin is already glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`, `One step away from being a fish 🐟`, `Remind someone you care about to drink water!`];
+    return [`Keep going, water warrior! 🌊`, `Your skin is glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`, `One step away from being a fish 🐟`, `Drink up, ${title}! 💧`];
 }
 
 onValue(hydrationRef, (snapshot) => {
@@ -220,7 +242,6 @@ onValue(hydrationRef, (snapshot) => {
         kStreak = data.kStreak || 0;
         mStreak = data.mStreak || 0;
         lastResetDate = data.lastResetDate || "";
-        
         const today = new Date().toLocaleDateString();
         if (lastResetDate && lastResetDate !== today) handleMidnightReset();
     }
@@ -252,7 +273,7 @@ function updateUI(entryFrom) {
 
     if (entryFrom === 'reset') {
         kCheer.innerText = "Thirsty? Lets get drinking!";
-        mCheer.innerText = "Good morning! Ready for your first sip?";
+        mCheer.innerText = "Ready for your first sip?";
         kAlreadyCelebrated = false;
         mAlreadyCelebrated = false;
     } else {
@@ -283,7 +304,6 @@ function updateUI(entryFrom) {
     document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
 
     let winDiv = document.getElementById("winner");
-    // New Logic: Check if totals are 0
     if (yourTotal === 0 && friendTotal === 0) {
         winDiv.innerText = "HYDRATION WAR IN PROGRESS... 😤";
     } else if (yourTotal > friendTotal) {
