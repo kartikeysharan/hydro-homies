@@ -56,31 +56,32 @@ h1 { color: #00796b; margin: 5px 0; font-size: 2.2rem; font-weight: 800; }
 display: flex;
 justify-content: center;
 align-items: center;
-gap: 10px; /* Original spacing */
+gap: 12px;
 margin-bottom: 10px;
 }
 
 h2 { color: #004d40; margin: 0; font-size: 1.8rem; font-weight: 700; }
 
+/* Removed background and padding */
 .crown-badge {
-font-size: 0.9rem;
-background: #fff9c4;
+font-size: 1.1rem;
+background: none;
 color: #fbc02d;
-padding: 4px 10px;
-border-radius: 12px;
 font-weight: bold;
 display: flex;
 align-items: center;
 gap: 4px;
 }
 
+/* Removed background and padding */
 .streak-badge { 
-font-size: 0.9rem; 
-background: #fff3e0; 
+font-size: 1.1rem; 
+background: none;
 color: #ef6c00; 
-padding: 4px 10px; 
-border-radius: 12px; 
 font-weight: bold; 
+display: flex;
+align-items: center;
+gap: 4px;
 }
 
 .btn-group { margin: 10px 0; display: flex; justify-content: center; gap: 8px; }
@@ -181,9 +182,9 @@ text-overflow: ellipsis;
 <div class="content-wrap">
 <div class="player-section">
 <div class="player-header">
-<div class="crown-badge">👑 <span id="k-crowns">0</span></div>
+<div class="crown-badge">👑<span id="k-crowns">0</span></div>
 <h2>Kartikey</h2>
-<div class="streak-badge">🔥 <span id="k-streak">0</span></div>
+<div class="streak-badge">🔥<span id="k-streak">0</span></div>
 </div>
 <div class="btn-group">
 <button class="oz-btn" onclick="addWater('you', 16)">16</button>
@@ -203,9 +204,9 @@ text-overflow: ellipsis;
 
 <div class="player-section">
 <div class="player-header">
-<div class="crown-badge">👑 <span id="m-crowns">0</span></div>
+<div class="crown-badge">👑<span id="m-crowns">0</span></div>
 <h2>Marcee</h2>
-<div class="streak-badge">🔥 <span id="m-streak">0</span></div>
+<div class="streak-badge">🔥<span id="m-streak">0</span></div>
 </div>
 <div class="btn-group">
 <button class="oz-btn" onclick="addWater('friend', 16.9)">16.9</button>
