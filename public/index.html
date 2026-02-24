@@ -236,6 +236,39 @@ text-overflow: ellipsis;
 </div>
 
 <script type="module">
+
+import { getMessaging, getToken } from 
+"https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+
+const messaging = getMessaging(app);
+
+async function registerForPush(user) {
+  const permission = await Notification.requestPermission();
+
+  if (permission !== "granted") {
+    console.log("Notification permission denied");
+    return;
+  }
+
+  const token = await getToken(messaging, {
+    vapidKey: "BDL_I5orxQUQVvOrAVTI80L_fK9oy1sexmPfxguM9WgmzgI5-gVK-KjbHcODb-xi4ZXU6ng5PH8YhFhacS_fsMM"
+  });
+
+  if (token) {
+    await set(ref(db, "tokens/" + user), token);
+    console.log("Token saved for", user);
+  }
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const userType = urlParams.get("user");
+
+if (userType === "marcee") {
+  registerForPush("friend");
+} else {
+  registerForPush("you");
+}
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
