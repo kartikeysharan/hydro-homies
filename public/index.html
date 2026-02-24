@@ -234,55 +234,71 @@ text-overflow: ellipsis;
 </div>
 </div>
 </div>
-
 <script type="module">
+// 1. IMPORT STATEMENTS FIRST
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, serverTimestamp, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
-import { getMessaging, getToken } from 
-"https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
+// 2. INITIALIZE FIREBASE APP
+const firebaseConfig = {
+    apiKey: "AIzaSyCfMLAnZKb7cAiEwliEnCtrpwIoKOjr1kg",
+    authDomain: "hydro-homies-458f6.firebaseapp.com",
+    projectId: "hydro-homies-458f6",
+    storageBucket: "hydro-homies-458f6.firebasestorage.app",
+    messagingSenderId: "533318428966",
+    appId: "1:533318428966:web:3f9ee356e1e3c0b3c939e7"
+};
 
+const app = initializeApp(firebaseConfig);
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    .then((registration) => {
+      console.log('Service Worker registered with scope:', registration.scope);
+    }).catch((err) => {
+      console.log('Service Worker registration failed:', err);
+    });
+}
+  
+const db = getDatabase(app);
 const messaging = getMessaging(app);
 
+// 3. MESSAGING REGISTRATION FUNCTION
 async function registerForPush(user) {
-  const permission = await Notification.requestPermission();
+    // Note: On iOS, this prompt only appears if opened from the Home Screen
+    const permission = await Notification.requestPermission();
 
-  if (permission !== "granted") {
-    console.log("Notification permission denied");
-    return;
-  }
+    if (permission !== "granted") {
+        console.log("Notification permission denied");
+        return;
+    }
 
-  const token = await getToken(messaging, {
-    vapidKey: "BDL_I5orxQUQVvOrAVTI80L_fK9oy1sexmPfxguM9WgmzgI5-gVK-KjbHcODb-xi4ZXU6ng5PH8YhFhacS_fsMM"
-  });
+    try {
+        const token = await getToken(messaging, {
+            vapidKey: "BDL_I5orxQUQVvOrAVTI80L_fK9oy1sexmPfxguM9WgmzgI5-gVK-KjbHcODb-xi4ZXU6ng5PH8YhFhacS_fsMM"
+        });
 
-  if (token) {
-    await set(ref(db, "tokens/" + user), token);
-    console.log("Token saved for", user);
-  }
+        if (token) {
+            await set(ref(db, "tokens/" + user), token);
+            console.log("Token saved for", user);
+        }
+    } catch (err) {
+        console.log("An error occurred while retrieving token. ", err);
+    }
 }
 
+// 4. DETERMINE USER AND REGISTER
 const urlParams = new URLSearchParams(window.location.search);
 const userType = urlParams.get("user");
 
 if (userType === "marcee") {
-  registerForPush("friend");
+    registerForPush("friend");
 } else {
-  registerForPush("you");
+    registerForPush("you");
 }
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
-const firebaseConfig = {
-apiKey: "AIzaSyCfMLAnZKb7cAiEwliEnCtrpwIoKOjr1kg",
-authDomain: "hydro-homies-458f6.firebaseapp.com",
-projectId: "hydro-homies-458f6",
-storageBucket: "hydro-homies-458f6.firebasestorage.app",
-messagingSenderId: "533318428966",
-appId: "1:533318428966:web:3f9ee356e1e3c0b3c939e7"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+// 5. REMAINING APP LOGIC (STRICTLY UNCHANGED)
 const hydrationRef = ref(db, "hydration");
 const goal = 100;
 
@@ -291,122 +307,123 @@ let kAlreadyCelebrated = false;
 let mAlreadyCelebrated = false;
 
 function getMessages(user) {
-const title = user === "Kartikey" ? "King" : "Queen";
-const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
-return [`Keep going, water warrior! 🌊`, `Your skin is already glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`, `One step away from being a fish 🐟`, `Remind someone you love to drink water 😊`];
+    const title = user === "Kartikey" ? "King" : "Queen";
+    const opp = user === "Kartikey" ? "Marcee" : "Kartikey";
+    return [`Keep going, water warrior! 🌊`, `Your skin is already glowing! ✨`, `Legendary gulp. 👑`, `${opp} is shaking! 👟`, `Hydration ${title} behavior.`, `One step away from being a fish 🐟`, `Remind someone you love to drink water 😊`];
 }
 
 onValue(hydrationRef, (snapshot) => {
-const data = snapshot.val();
-if (data) {
-yourTotal = data.yourTotal || 0;
-friendTotal = data.friendTotal || 0;
-kStreak = data.kStreak || 0;
-mStreak = data.mStreak || 0;
-kCrowns = data.kCrowns || 0;
-mCrowns = data.mCrowns || 0;
-lastResetDate = data.lastResetDate || "";
-const today = new Date().toLocaleDateString();
-if (lastResetDate && lastResetDate !== today) handleMidnightReset();
-}
-updateUI(null);
+    const data = snapshot.val();
+    if (data) {
+        yourTotal = data.yourTotal || 0;
+        friendTotal = data.friendTotal || 0;
+        kStreak = data.kStreak || 0;
+        mStreak = data.mStreak || 0;
+        kCrowns = data.kCrowns || 0;
+        mCrowns = data.mCrowns || 0;
+        lastResetDate = data.lastResetDate || "";
+        const today = new Date().toLocaleDateString();
+        if (lastResetDate && lastResetDate !== today) handleMidnightReset();
+    }
+    updateUI(null);
 });
 
 function handleMidnightReset() {
-const today = new Date().toLocaleDateString();
-let newKCrowns = kCrowns;
-let newMCrowns = mCrowns;
+    const today = new Date().toLocaleDateString();
+    let newKCrowns = kCrowns;
+    let newMCrowns = mCrowns;
 
-if (yourTotal > friendTotal) {
-    newKCrowns++;
-} else if (friendTotal > yourTotal) {
-    newMCrowns++;
-}
+    if (yourTotal > friendTotal) {
+        newKCrowns++;
+    } else if (friendTotal > yourTotal) {
+        newMCrowns++;
+    }
 
-set(hydrationRef, {
-yourTotal: 0, friendTotal: 0,
-kStreak: yourTotal >= goal ? kStreak + 1 : 0,
-mStreak: friendTotal >= goal ? mStreak + 1 : 0,
-kCrowns: newKCrowns,
-mCrowns: newMCrowns,
-lastResetDate: today, lastUpdated: serverTimestamp()
-});
+    set(hydrationRef, {
+        yourTotal: 0, friendTotal: 0,
+        kStreak: yourTotal >= goal ? kStreak + 1 : 0,
+        mStreak: friendTotal >= goal ? mStreak + 1 : 0,
+        kCrowns: newKCrowns,
+        mCrowns: newMCrowns,
+        lastResetDate: today, lastUpdated: serverTimestamp()
+    });
 }
 
 function updateUI(entryFrom) {
-document.getElementById("your-total").innerText = yourTotal.toFixed(1);
-document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
-document.getElementById("k-streak").innerText = kStreak;
-document.getElementById("m-streak").innerText = mStreak;
-document.getElementById("k-crowns").innerText = kCrowns;
-document.getElementById("m-crowns").innerText = mCrowns;
+    document.getElementById("your-total").innerText = yourTotal.toFixed(1);
+    document.getElementById("friend-total").innerText = friendTotal.toFixed(1);
+    document.getElementById("k-streak").innerText = kStreak;
+    document.getElementById("m-streak").innerText = mStreak;
+    document.getElementById("k-crowns").innerText = kCrowns;
+    document.getElementById("m-crowns").innerText = mCrowns;
 
-let kPct = (yourTotal / goal) * 100, mPct = (friendTotal / goal) * 100;
-const kCheer = document.getElementById("your-cheer"), mCheer = document.getElementById("friend-cheer");
+    let kPct = (yourTotal / goal) * 100, mPct = (friendTotal / goal) * 100;
+    const kCheer = document.getElementById("your-cheer"), mCheer = document.getElementById("friend-cheer");
 
-if (entryFrom === 'reset') {
-kCheer.innerText = "Thirsty? Let's get drinking!";
-mCheer.innerText = "Good Morning! Ready for your first sip?";
-kAlreadyCelebrated = false;
-mAlreadyCelebrated = false;
-} else {
-if (kPct >= 100) {
-kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
-if (entryFrom === 'you' && !kAlreadyCelebrated) {
-confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-kAlreadyCelebrated = true;
-}
-} else {
-kAlreadyCelebrated = false;
-if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 7)];
-}
+    if (entryFrom === 'reset') {
+        kCheer.innerText = "Thirsty? Let's get drinking!";
+        mCheer.innerText = "Good Morning! Ready for your first sip?";
+        kAlreadyCelebrated = false;
+        mAlreadyCelebrated = false;
+    } else {
+        if (kPct >= 100) {
+            kCheer.innerHTML = `<div class="goal-badge">✨ KARTIKEY IS HYDRATED ✨</div>`;
+            if (entryFrom === 'you' && !kAlreadyCelebrated) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                kAlreadyCelebrated = true;
+            }
+        } else {
+            kAlreadyCelebrated = false;
+            if (entryFrom === 'you') kCheer.innerText = getMessages("Kartikey")[Math.floor(Math.random() * 7)];
+        }
 
-if (mPct >= 100) {
-mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
-if (entryFrom === 'friend' && !mAlreadyCelebrated) {
-confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-mAlreadyCelebrated = true;
-}
-} else {
-mAlreadyCelebrated = false;
-if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 7)];
-}
-}
+        if (mPct >= 100) {
+            mCheer.innerHTML = `<div class="goal-badge">✨ MARCEE IS HYDRATED ✨</div>`;
+            if (entryFrom === 'friend' && !mAlreadyCelebrated) {
+                confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
+                mAlreadyCelebrated = true;
+            }
+        } else {
+            mAlreadyCelebrated = false;
+            if (entryFrom === 'friend') mCheer.innerText = getMessages("Marcee")[Math.floor(Math.random() * 7)];
+        }
+    }
 
-document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%";
-document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
+    document.getElementById("your-progress").style.width = Math.min(kPct, 100) + "%";
+    document.getElementById("friend-progress").style.width = Math.min(mPct, 100) + "%";
 
-let winDiv = document.getElementById("winner");
-if (yourTotal === 0 && friendTotal === 0) {
-winDiv.innerText = "The Hydration War Begins ⚔️";
-} else if (yourTotal > friendTotal) {
-winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
-} else if (friendTotal > yourTotal) {
-winDiv.innerText = "🏆 MARCEE IS LEADING!";
-} else {
-winDiv.innerText = "HYDRATION WAR TIED 😤";
-}
+    let winDiv = document.getElementById("winner");
+    if (yourTotal === 0 && friendTotal === 0) {
+        winDiv.innerText = "The Hydration War Begins ⚔️";
+    } else if (yourTotal > friendTotal) {
+        winDiv.innerText = "🏆 KARTIKEY IS LEADING!";
+    } else if (friendTotal > yourTotal) {
+        winDiv.innerText = "🏆 MARCEE IS LEADING!";
+    } else {
+        winDiv.innerText = "HYDRATION WAR TIED 😤";
+    }
 
-if (entryFrom && entryFrom !== 'null') {
-set(hydrationRef, {
-yourTotal: parseFloat(yourTotal.toFixed(1)), friendTotal: parseFloat(friendTotal.toFixed(1)),
-kStreak, mStreak, kCrowns, mCrowns, lastResetDate: lastResetDate || new Date().toLocaleDateString(), lastUpdated: serverTimestamp()
-});
-}
+    if (entryFrom && entryFrom !== 'null') {
+        set(hydrationRef, {
+            yourTotal: parseFloat(yourTotal.toFixed(1)), friendTotal: parseFloat(friendTotal.toFixed(1)),
+            kStreak, mStreak, kCrowns, mCrowns, lastResetDate: lastResetDate || new Date().toLocaleDateString(), lastUpdated: serverTimestamp()
+        });
+    }
 }
 
 window.addWater = function(p, a) { p === "you" ? yourTotal += a : friendTotal += a; updateUI(p); };
 window.addCustom = function(p) {
-const id = p === "you" ? "your-input" : "friend-input";
-let val = parseFloat(document.getElementById(id).value);
-if (!isNaN(val) && val > 0) {
-p === "you" ? yourTotal += val : friendTotal += val;
-document.getElementById(id).value = "";
-updateUI(p);
-}
+    const id = p === "you" ? "your-input" : "friend-input";
+    let val = parseFloat(document.getElementById(id).value);
+    if (!isNaN(val) && val > 0) {
+        p === "you" ? yourTotal += val : friendTotal += val;
+        document.getElementById(id).value = "";
+        updateUI(p);
+    }
 };
 window.resetDay = function() { if(confirm("Reset water?")) { yourTotal = 0; friendTotal = 0; updateUI('reset'); } };
 window.resetStreaks = function() { if(confirm("Reset streaks?")) { kStreak = 0; mStreak = 0; kCrowns = 0; mCrowns = 0; updateUI('reset'); } };
 </script>
+
 </body>
 </html>
