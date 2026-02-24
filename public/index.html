@@ -67,7 +67,6 @@ margin-bottom: 10px;
 
 h2 { color: #004d40; margin: 0; font-size: 1.8rem; font-weight: 700; }
 
-/* Removed background and padding */
 .crown-badge {
 font-size: 1.1rem;
 background: none;
@@ -78,7 +77,6 @@ align-items: center;
 gap: 4px;
 }
 
-/* Removed background and padding */
 .streak-badge { 
 font-size: 1.1rem; 
 background: none;
@@ -236,12 +234,11 @@ text-overflow: ellipsis;
 </div>
 </div>
 <script type="module">
-// 1. IMPORT STATEMENTS FIRST
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, serverTimestamp, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 import { getMessaging, getToken } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging.js";
 
-// 2. INITIALIZE FIREBASE APP
 const firebaseConfig = {
     apiKey: "AIzaSyCfMLAnZKb7cAiEwliEnCtrpwIoKOjr1kg",
     authDomain: "hydro-homies-458f6.firebaseapp.com",
@@ -265,7 +262,7 @@ if ('serviceWorker' in navigator) {
 const db = getDatabase(app);
 const messaging = getMessaging(app);
 
-// 3. MESSAGING REGISTRATION FUNCTION
+<!--
 async function registerForPush(user) {
     // Note: On iOS, this prompt only appears if opened from the Home Screen
     const permission = await Notification.requestPermission();
@@ -288,8 +285,51 @@ async function registerForPush(user) {
         console.log("An error occurred while retrieving token. ", err);
     }
 }
+-->
 
-// 4. DETERMINE USER AND REGISTER
+async function registerForPush(user) {
+  // 1. Check if we are on a Home Screen App (Standalone)
+  const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+  if (!isStandalone) {
+    alert("⚠️ Not in Home Screen mode. Please use 'Add to Home Screen' first!");
+    return;
+  }
+
+  alert("Checking Notification support...");
+
+  if (!("Notification" in window)) {
+    alert("❌ This browser does not support notifications.");
+    return;
+  }
+
+  alert("Requesting permission...");
+  const permission = await Notification.requestPermission();
+  alert("Permission status: " + permission);
+
+  if (permission !== "granted") {
+    alert("❌ Permission denied. Go to Settings > Notifications to reset.");
+    return;
+  }
+
+  try {
+    alert("Fetching Firebase token...");
+    const token = await getToken(messaging, {
+      vapidKey: "BDL_I5orxQUQVvOrAVTI80L_fK9oy1sexmPfxguM9WgmzgI5-gVK-KjbHcODb-xi4ZXU6ng5PH8YhFhacS_fsMM"
+    });
+
+    if (token) {
+      alert("✅ Token received! Saving to database...");
+      await set(ref(db, "tokens/" + user), token);
+      alert("✅ Token saved for " + user);
+    } else {
+      alert("❌ No token received.");
+    }
+  } catch (err) {
+    alert("❌ Error: " + err.message);
+    console.error(err);
+  }
+}
+
 const urlParams = new URLSearchParams(window.location.search);
 const userType = urlParams.get("user");
 
@@ -299,7 +339,6 @@ if (userType === "marcee") {
     registerForPush("you");
 }
 
-// 5. REMAINING APP LOGIC (STRICTLY UNCHANGED)
 const hydrationRef = ref(db, "hydration");
 const goal = 100;
 
