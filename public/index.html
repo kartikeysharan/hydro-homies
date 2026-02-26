@@ -182,10 +182,6 @@ text-overflow: ellipsis;
 <h1>Hydro Homies ⛲</h1>
 </div>
 
-<button class="add-btn" onclick="startPush()" style="margin-bottom:10px;">
-Enable Notifications 🔔
-</button>
-
 <div class="content-wrap">
 <div class="player-section">
 <div class="player-header">
@@ -267,45 +263,23 @@ const db = getDatabase(app);
 const messaging = getMessaging(app);
 
 async function registerForPush(user) {
-  // 1. Check if we are on a Home Screen App (Standalone)
-  const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-  if (!isStandalone) {
-    alert("⚠️ Not in Home Screen mode. Please use 'Add to Home Screen' first!");
-    return;
-  }
+  if (!("Notification" in window)) return;
 
-  alert("Checking Notification support...");
+  if (Notification.permission === "granted") return;
 
-  if (!("Notification" in window)) {
-    alert("❌ This browser does not support notifications.");
-    return;
-  }
-
-  alert("Requesting permission...");
   const permission = await Notification.requestPermission();
-  alert("Permission status: " + permission);
-
-  if (permission !== "granted") {
-    alert("❌ Permission denied. Go to Settings > Notifications to reset.");
-    return;
-  }
+  if (permission !== "granted") return;
 
   try {
-    alert("Fetching Firebase token...");
     const token = await getToken(messaging, {
       vapidKey: "BDL_I5orxQUQVvOrAVTI80L_fK9oy1sexmPfxguM9WgmzgI5-gVK-KjbHcODb-xi4ZXU6ng5PH8YhFhacS_fsMM"
     });
 
     if (token) {
-      alert("✅ Token received! Saving to database...");
       await set(ref(db, "tokens/" + user), token);
-      alert("✅ Token saved for " + user);
-    } else {
-      alert("❌ No token received.");
     }
   } catch (err) {
-    alert("❌ Error: " + err.message);
-    console.error(err);
+    console.error("Push setup error:", err);
   }
 }
 
