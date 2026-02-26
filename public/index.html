@@ -7,7 +7,7 @@
 <title>Hydro Homies 🌊</title>
 <link rel="apple-touch-icon" href="https://i.imgur.com/2sjVIGe.png">
 <link rel="icon" type="image/png" sizes="192x192" href="https://i.imgur.com/2sjVIGe.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
@@ -286,13 +286,12 @@ async function registerForPush(user) {
 const urlParams = new URLSearchParams(window.location.search);
 const userType = urlParams.get("user");
 
-    window.startPush = function() {
-    if (userType === "marcee") {
-        registerForPush("friend");
-    } else {
-        registerForPush("you");
-    }
+if (userType === "marcee") {
+    registerForPush("friend");
+} else {
+    registerForPush("you");
 }
+
 
 const hydrationRef = ref(db, "hydration");
 const goal = 100;
