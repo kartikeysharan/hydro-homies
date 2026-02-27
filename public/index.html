@@ -280,8 +280,9 @@ async function registerForPush(user) {
             vapidKey: "BDL_I5orxQUQVvOrAVTI80L_fK9oy1sexmPfxguM9WgmzgI5-gVK-KjbHcODb-xi4ZXU6ng5PH8YhFhacS_fsMM"
         });
         if (token) {
-            await set(ref(db, "tokens/" + user), token);
-            console.log("Token saved for", user);
+            await set(ref(db, "tokens/" + tokenSlot), token);
+            console.log("Token saved for", tokenSlot);
+            pushRegistered = true;
         }
     } catch (err) {
         console.error("Push registration error:", err);
@@ -292,10 +293,11 @@ const urlParams = new URLSearchParams(window.location.search);
 const userType = urlParams.get("user");
 
 document.body.addEventListener('click', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const userType = urlParams.get("user");
-    const user = (userType === "marcee") ? "friend" : "you";
-    registerForPush(user);
+    if (userType === "marcee") {
+            registerForPush("friend"); // Marcee is 'friend' in your hydration logic
+        } else {
+            registerForPush("you");    // Kartikey is 'you'
+        }
 }, { once: true });
 
 const hydrationRef = ref(db, "hydration");
