@@ -280,8 +280,8 @@ async function registerForPush(user) {
             vapidKey: "BDL_I5orxQUQVvOrAVTI80L_fK9oy1sexmPfxguM9WgmzgI5-gVK-KjbHcODb-xi4ZXU6ng5PH8YhFhacS_fsMM"
         });
         if (token) {
-            await set(ref(db, "tokens/" + tokenSlot), token);
-            console.log("Token saved for", tokenSlot);
+            await set(ref(db, "tokens/" + user), token);
+            console.log("Token saved for", user);
             pushRegistered = true;
         }
     } catch (err) {
