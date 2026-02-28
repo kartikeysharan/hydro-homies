@@ -1,7 +1,7 @@
 {
   "name": "Hydro Homies",
   "short_name": "HydroHomies",
-  "start_url": "/?user=you",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#e0f7fa",
   "theme_color": "#00796b",
